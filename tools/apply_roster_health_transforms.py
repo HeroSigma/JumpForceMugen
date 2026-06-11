@@ -30,8 +30,8 @@ transformation triggers by inserting:
 
   triggerall = 0 ; AUTO_HEALTH_TRANSFORM disables manual trigger
 
-It also writes a TODO adapter block beside the manifest for each candidate so
-we can add character-specific SelfState logic safely after review.
+It also survives Windows read-only / permission locked files by skipping
+blocked files instead of crashing the whole batch.
 
 Goku is skipped because it has already been custom-patched and tested.
 """
@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -68,6 +69,7 @@ LOWER_CONFIDENCE_WORDS = [
     "down +", "aire", "air", "basic", "basico", "basicos",
 ]
 
+
 @dataclass
 class Candidate:
     path: Path
@@ -93,7 +95,17 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="latin-1", errors="replace")
 
 
+def make_writable(path: Path) -> None:
+    """Best-effort fix for Windows read-only files."""
+    try:
+        mode = path.stat().st_mode
+        path.chmod(mode | stat.S_IWRITE | stat.S_IREAD)
+    except OSError:
+        pass
+
+
 def write_text(path: Path, text: str) -> None:
+    make_writable(path)
     path.write_text(text, encoding="latin-1", errors="replace")
 
 
@@ -218,7 +230,8 @@ def patch_file(path: Path, candidates: list[Candidate]) -> bool:
     return changed
 
 
-def write_manifest(candidates: list[Candidate]) -> None:
+def write_manifest(candidates: list[Candidate], skipped: list[tuple[Path, str]] | None = None) -> None:
+    skipped = skipped or []
     high = [c for c in candidates if c.confidence == "high"]
     med = [c for c in candidates if c.confidence == "medium"]
     low = [c for c in candidates if c.confidence == "low"]
@@ -228,7 +241,14 @@ def write_manifest(candidates: list[Candidate]) -> None:
     parts.append("Goku is skipped: chars/Goku/\n")
     parts.append(f"High confidence candidates: {len(high)}\n")
     parts.append(f"Medium confidence candidates: {len(med)}\n")
-    parts.append(f"Low confidence candidates: {len(low)}\n\n")
+    parts.append(f"Low confidence candidates: {len(low)}\n")
+    parts.append(f"Skipped locked files: {len(skipped)}\n\n")
+
+    if skipped:
+        parts.append("===== SKIPPED LOCKED / PERMISSION FILES =====\n")
+        for path, err in skipped:
+            parts.append(f"{rel(path)} | {err}\n")
+        parts.append("\n")
 
     for title, group in [("HIGH", high), ("MEDIUM", med), ("LOW", low)]:
         parts.append(f"===== {title} CONFIDENCE =====\n")
@@ -242,6 +262,7 @@ def write_manifest(candidates: list[Candidate]) -> None:
     parts.append("\nNEXT STEP\n")
     parts.append("Review HIGH candidates first. Then add per-character SelfState adapters with health thresholds.\n")
     parts.append("Manual command blocks can be disabled safely only after confirming each candidate is an actual transformation, not a super/special.\n")
+    parts.append("If files were skipped, close IKEMEN / editors and remove read-only attributes, then rerun --apply.\n")
 
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST.write_text("".join(parts), encoding="utf-8")
@@ -253,7 +274,26 @@ def main() -> int:
     args = parser.parse_args()
 
     candidates = scan()
-    write_manifest(candidates)
+    skipped: list[tuple[Path, str]] = []
+    changed: list[Path] = []
+
+    if args.apply:
+        by_path: dict[Path, list[Candidate]] = {}
+        for c in candidates:
+            by_path.setdefault(c.path, []).append(c)
+
+        for path, group in by_path.items():
+            try:
+                if patch_file(path, group):
+                    changed.append(path)
+            except PermissionError as exc:
+                skipped.append((path, str(exc)))
+                print(f"Skipped locked file: {rel(path)}")
+            except OSError as exc:
+                skipped.append((path, str(exc)))
+                print(f"Skipped file: {rel(path)} | {exc}")
+
+    write_manifest(candidates, skipped)
 
     print(f"Manifest written: {MANIFEST.relative_to(ROOT)}")
     print(f"Candidates found: {len(candidates)}")
@@ -262,16 +302,12 @@ def main() -> int:
     print(f"Low confidence: {sum(c.confidence == 'low' for c in candidates)}")
 
     if args.apply:
-        by_path: dict[Path, list[Candidate]] = {}
-        for c in candidates:
-            by_path.setdefault(c.path, []).append(c)
-        changed = []
-        for path, group in by_path.items():
-            if patch_file(path, group):
-                changed.append(path)
-        print("Patched files:")
+        print(f"Patched files: {len(changed)}")
         for p in changed:
             print(f"  {rel(p)}")
+        if skipped:
+            print(f"Skipped locked/permission files: {len(skipped)}")
+            print("Close IKEMEN / editors or run: attrib -R \"path\\to\\file.cmd\" then rerun --apply.")
     else:
         print("Dry-run only. Use --apply after reviewing the manifest.")
 
