@@ -9,8 +9,6 @@
 -- variable and calls the appropriate ChangeState. If a healing percentage is defined,
 -- the module will add life accordingly.
 
-local ikemen = require 'script/common/ikemen'  -- IKEMEN helper functions (if available)
-
 local forms = {}
 local formsLoaded = false
 
@@ -64,10 +62,9 @@ end
 -- Lazy load forms on first update
 local function ensureFormsLoaded()
     if not formsLoaded then
-        -- Attempt to load forms from the same directory as this script
-        local baseDir = 'data/transforms/'
         local paths = {
-            baseDir .. 'forms.def',
+            'data/transforms/forms.def',
+            './data/transforms/forms.def',
             'forms.def'
         }
         for _, p in ipairs(paths) do
@@ -88,7 +85,7 @@ end
 -- Main update function called every frame (if bound via system.def module)
 local function onTick()
     ensureFormsLoaded()
-    -- Iterate over all players. IKEMEN exposes `players` table globally.
+    -- Iterate over all players. IKEMEN exposes `players` table globally in some builds.
     if not players then return end
     for _, p in ipairs(players) do
         if p and p.char and p.char:getName() then
@@ -124,7 +121,7 @@ local function onTick()
     end
 end
 
--- Return a table of hooks. IKEMEN calls `f_playerUpdate` per frame on players if defined.
+-- Return a table of hooks. Different IKEMEN GO builds expose different hooks.
 return {
     f_update = onTick,
     f_playerUpdate = onTick
