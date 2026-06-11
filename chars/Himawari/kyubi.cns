@@ -1,0 +1,233 @@
+;====================================
+; Kyubi Transformation (Permanent)
+;====================================
+[Statedef 3998] ; Kyubi Transform Animation
+type = S
+movetype = I
+physics = N
+anim = 33334    
+ctrl = 0
+sprpriority = 2
+
+;------------------------------------
+; Cutscene Effects
+;------------------------------------
+
+; Freeze gameplay briefly (dramatic pause)
+[State 3998, Pause]
+type = Pause
+trigger1 = Time = 0
+time = 60              ; 1 second freeze
+movetime = 0
+
+; Screen darken effect
+[State 3998, Darken Screen]
+type = BGPalFX
+trigger1 = Time = 0
+time = 60
+add = -128,-128,-128   ; dark tint
+mul = 256,256,256
+
+
+[State 3998, Roar Snd]
+type = PlaySnd
+trigger1 = Time = 1
+value = S6000,4
+
+; Roar sound 
+[State 3998, Roar Snd]
+type = PlaySnd
+trigger1 = Time = 5
+value = S6000,3
+
+; Flash of light
+[State 3998, Flash]
+type = Explod
+trigger1 = Time = 15
+anim = 17501             
+id = 17501
+pos = 0,0
+postype = P1
+bindtime = 1
+removetime = 180
+sprpriority = 3
+ownpal = 1
+
+; Shockwave (expanding aura burst)
+[State 3998, Shockwave]
+type = Explod
+trigger1 = Time = 20
+anim = 70713           
+id = 35505
+pos = 0,0
+postype = P1
+bindtime = -1
+removetime = 180
+scale = .3+(Time*.05),.3+(Time*.05)
+sprpriority = 5
+ownpal = 1
+
+
+; Screen Shake 
+[State 3998, Shockwave Shake]
+type = EnvShake
+trigger1 = Time = 20
+time = 30
+freq = 100
+ampl = -6
+
+; Final aura burst (big chakra)
+[State 3998, Final Aura Burst]
+type = Explod
+trigger1 = Time = 50
+anim = 35789           
+id = 3020
+pos = 0,0
+postype = P1
+bindtime = 20
+removetime = 180
+sprpriority = 5
+ownpal = 1
+
+;------------------------------------
+; Transformation Logic
+;------------------------------------
+
+; Mark Kyubi Active
+[State 3998, Mark Kyubi Active]
+type = VarSet
+trigger1 = Time = 0
+v = 21
+value = 1
+
+; Restore Full Life
+[State 3998, Restore Full Life]
+type = LifeSet
+trigger1 = Time = 0
+value = lifemax
+
+; After animation, enter Kyubi Mode
+[State 3998, ChangeState]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 3999
+
+
+;====================================
+; Kyubi Mode Active (Permanent)
+;====================================
+[Statedef 3999]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+
+; Attack Boost
+[State 3999, Attack Boost]
+type = AttackMulSet
+trigger1 = 1
+value = 3 ; % attack
+
+; Defense Boost
+[State 3999, Defense Boost]
+type = DefenceMulSet
+trigger1 = 1
+value = 0.5 ; take % damage
+
+
+;====================================
+;; Aura Effect (AI-friendly)
+[State 3999, Aura1]
+type = Explod
+trigger1 = !NumExplod(3010)
+anim = 12345
+id = 3010
+pos = 0,0
+bindtime = -1
+removetime = -1
+ownpal = 1
+sprpriority = 3
+scale = 1.,1.
+postype = p1
+ontop = 1
+
+[State 3999, Aura2]
+type = Explod
+trigger1 = !NumExplod(8151)
+anim = 5845
+id = 8151
+pos = 0,-55
+bindtime = -1
+removetime = -1
+ownpal = 1
+sprpriority = 4
+scale = 0.5,0.5
+postype = p1
+ontop = 1
+
+[State 3999, Aura3]
+type = Explod
+trigger1 = !NumExplod(8162)
+anim = 8811
+id = 8162
+pos = 0,0
+bindtime = -1
+removetime = -1
+ownpal = 1
+sprpriority = 5
+scale = 0.3,0.4
+postype = p1
+ontop = 1
+
+[State 3999, Aura4]
+type = Explod
+trigger1 = !NumExplod(8254)
+anim = 59393
+id = 8254
+pos = 0,0
+bindtime = -1
+removetime = -1
+ownpal = 1
+sprpriority = 6
+scale = 0.5,0.5
+postype = p1
+ontop = 1
+
+[State 3999, Aura5]
+type = Explod
+trigger1 = !NumExplod(82821)
+anim = 82821
+id = 82821
+pos = 0,0
+bindtime = -1
+removetime = -1
+ownpal = 1
+sprpriority = 7
+scale = 0.7,0.7
+postype = p1
+ontop = 1
+
+;------------------------------------
+; Kyubi Idle Override
+;------------------------------------
+[Statedef 0]
+type = S
+physics = S
+sprpriority = 0
+
+; Kyubi Active → use custom idle
+[State 0, Kyubi Idle]
+type = ChangeAnim
+triggerall = var(21) = 1
+trigger1 = Anim != 98989
+value = 98989
+
+; Normal idle (fallback if not Kyubi)
+[State 0, Normal Idle]
+type = ChangeAnim
+triggerall = var(21) = 0
+trigger1 = Anim != 0
+value = 0
+
+
+

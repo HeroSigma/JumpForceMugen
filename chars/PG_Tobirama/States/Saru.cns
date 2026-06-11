@@ -1,0 +1,3054 @@
+
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Stand
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Stand
+[Statedef 15000]
+type = S
+physics = S
+sprpriority = 2
+
+[State 15000, ChangeAnim]
+type = ChangeAnim
+trigger1 = Anim != 15000 && Anim != 15005
+trigger2 = Anim = 15005 && AnimTime = 15000
+value = 15000
+
+[State 15000]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15000, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15000, PosSet]
+type = PosSet
+trigger1 = 1
+y = 0
+ignorehitpause = 1
+
+[State 15000, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) <= 0
+value = 15001
+
+[State 15000, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15000, Turn]
+type = Turn
+trigger1 = p2bodydist x < -5
+
+[State 15000, VelSet]
+type = VelSet
+trigger1 = Time = 0
+y = 0
+
+[State 15000, VelSet]
+type = VelSet
+trigger1 = abs(vel x) < 2
+trigger2 = Time = 4
+x = 0
+
+[State 15000, Bushin Fin]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+[State 15000, Power Charge]
+type = ChangeState
+Triggerall = parent,movetype != H
+Triggerall = parent,power < 800
+Triggerall = StateType = S
+trigger1 = P2BodyDist X > 120 && Random <= 50
+trigger2 = Random = [10,20]
+trigger3 = parent,movetype != H
+value = 15750
+
+[State 15000, Walk]
+type = ChangeState
+Triggerall = time > 10
+trigger1 = p2bodydist x > 50 && random < 700
+value = 15020
+
+[State 15000, Dash]
+type = ChangeState
+Triggerall = time > 10
+trigger1 = p2bodydist x > 150 && random < 700
+trigger2 = p2bodydist x <= 50 && enemy,movetype = A
+trigger3 = random < 100
+value = 15700
+
+[State 15000, Jump Back]
+type = ChangeState
+Triggerall = time > 10
+Triggerall = stateno != 15105
+trigger1 = p2bodydist x <= 30 && p2movetype = A
+trigger2 = p2bodydist x <= 50 && random <= 200
+trigger3 = random < 400
+value = 15105
+
+[State 15000, Jump Start]
+type = ChangeState
+Triggerall = time > 10
+Triggerall = p2statetype = A
+trigger1 = p2bodydist x < 100
+trigger2 = random < 600
+value = 15040
+
+[State 15000, Combo 1]
+type = ChangeState
+Triggerall = StateType = S
+trigger1 = random <=20 && time >= 10
+trigger2 = p2bodydist x <= 30 && random <=500
+value = 15100
+
+[State 15000, Combo 2]
+type = ChangeState
+Triggerall = StateType = S
+trigger1 = random <=20 && time >= 10
+trigger2 = p2bodydist x <= 30 && random <=500
+value = 15200
+
+[State 15000, Katon]
+type = ChangeState
+Triggerall = parent,power >= 100
+Triggerall = StateType = S
+Triggerall = (p2statetype = S) || (p2statetype = C)|| (p2statetype = A)
+trigger1 = P2BodyDist x <= 110 && Random = [80,90]
+trigger2 = Random = [70,80]
+value = 15400
+
+[State 15000, Shuriken]
+type = ChangeState
+Triggerall = StateType = S
+trigger1 = random <=10 && time >= 8
+trigger2 = p2bodydist x >= 70 && random <=20
+value = 15500
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Finish
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Fin
+[Statedef 15001]
+type = S
+movetype= I
+physics = S
+ctrl = 0
+anim = 15001
+sprpriority = 1
+
+[state 20]
+type = PlaySnd
+trigger1 = animelem = 2
+value = s0,1+(random%3)
+volume = 200
+
+[State 15001, NotHitBy]
+type = NotHitBy
+trigger1 = 1
+value = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+time = 1
+
+[State 15001, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 181, Explod]
+type = Explod
+trigger1 = time = 35
+anim = 9029
+ID = 5330
+pos = 0,-30
+postype = p1
+accel = 0,-10
+facing = 1
+vfacing = 1
+bindtime = 0
+removetime = -2
+scale = .50,.50
+sprpriority = 5
+ontop = 1
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 1
+supermovetime = 0
+pausemovetime = 0
+ignorehitpause = 1
+
+[State 181, EnvShake]
+type = EnvShake
+trigger1 = time = 35
+time = 20
+ignorehitpause = 1
+
+[State 181, PlaySnd]
+type = PlaySnd
+trigger1 = time = 35
+value = S0,20
+volumescale = 200
+ignorehitpause = 1
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9010
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9009
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9008
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9007
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9006
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9005
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9004
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9003
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9002
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9001
+
+[State 15001, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 9000
+
+[State 15001, Destroyself]
+type = Destroyself
+trigger1 = animtime = 0
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Intro
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Intro
+[Statedef 15002]
+type = S
+physics = S
+sprpriority = 2
+
+[state 20]
+type = PlaySnd
+trigger1 = animelem = 3
+value = s0,1+(random%3)
+volume = 200
+
+[State 15002, Helper]
+type = Helper
+trigger1 = time = 0
+helpertype = normal 
+name = "Lifebar"
+ID = 15900
+stateno = 15900
+pos = 0,0
+postype = p1    
+facing = 1
+keyctrl = 0
+ownpal = 1
+ignorehitpause = 1
+
+[State 15002, ParentVarSet]
+type = ParentVarSet
+trigger1 = time = 0
+v = 16
+value = 300
+
+[State 15002, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15002, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15002, NotHitBy]
+type = NotHitBy
+trigger1 = 1
+value = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+time = 5
+
+[State 15002, PlayerPush]
+type = PlayerPush
+trigger1 =  1
+value = 0
+
+[State 15002, ChangeAnim]
+type = ChangeAnim
+trigger1 = time = 0
+value = 15002
+
+[State 0, Soru]
+type = Helper
+trigger1 = animelem = 2
+helpertype = normal
+name = "Soru"
+ID = 15003
+stateno = 15003
+pos = -70,-100
+postype = p1
+ownpal = 1
+Size.xscale = .5
+Size.yscale = .5
+
+[State 15002, ChangeState]
+type = ChangeState
+trigger1 = time = 41
+value = 15020
+
+[State 15002, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Intro
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Intro
+[Statedef 15003]
+type = A
+movetype = I
+physics = N
+juggle = 1
+velset = 5,5
+ctrl = 0
+anim = 9028
+sprpriority = 4
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S0,22
+volume = 50
+
+[State 0, AngleDraw]
+type = AngleDraw
+trigger1 = 1
+value = -45
+
+[State 0, Trans]
+type = Trans
+trigger1 = 1
+trans = sub
+ignorehitpause = 1
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = Noshadow
+ignorehitpause = 1
+
+[State 200, End]
+type = Destroyself
+trigger1 = animtime = 0
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                                      Iwagakure - Limite
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Time
+[StateDef 15004]
+type = S  
+movetype = A
+physics = S
+juggle = 1
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = -1
+
+[State 55555, 5]
+type = destroyself
+trigger1 = Time = 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Walk
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Walk
+[Statedef 15020]
+type = S
+physics = S
+anim = 15020
+sprpriority = 2
+
+[State 15020, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15020, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15020, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15020, PlaySnd]
+type = PlaySnd
+trigger1 = animelem = 3||animelem = 6
+value = S20,1
+
+[state 20]
+type = PlaySnd
+trigger1 = animelem = 2
+value = s0,1+(random%3)
+volume = 200
+
+[State 15020, VelSet]
+type = VelSet
+trigger1 = 1
+x = const(velocity.walk.fwd.x)
+
+[State 15020, ChangeState]
+type = ChangeState
+Triggerall = time > 5
+trigger1 = p2statetype = A && random < 100 && p2bodydist x < 70
+value = 15040
+
+[State 15020, ChangeState]
+type = ChangeState
+trigger1 = p2bodydist x < 30 && random < 800
+trigger2 = p2bodydist x < 80 && random < 100
+value = 15000
+
+[State 15020, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Jump Back
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Jump Back
+[Statedef 15105]
+type    = S
+physics = S
+ctrl = 0
+anim = 15105
+sprpriority = 2
+
+[state 20]
+type = PlaySnd
+trigger1 = animelem = 2
+value = s0,1+(random%3)
+volume = 200
+
+[State 15105, Turn]
+type = Turn
+trigger1 = P2dist x < 0
+ignorehitpause = 1
+
+[State 15105, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15105, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15105, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15801,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15105, Explod]
+type = Explod
+trigger1 = time = 2
+anim = 7015
+ID = 15105
+pos = 0,9
+postype = p1
+facing = -1
+vfacing = 1
+bindtime = 0
+removetime = -2
+scale = .3,1
+sprpriority = 1
+ontop = 0
+ownpal = 1
+trans = addalpha
+alpha = 150,256
+removeongethit = 0
+
+[State 15105, PlaySnd]
+type = PlaySnd
+trigger1 = time = 2
+value = S40,1
+volume = 50
+
+[State 15105, VelSet]
+type = VelSet
+trigger1 = time = 2
+x = -4
+y = -4
+
+[State 15105, Gravity]
+type = Gravity
+trigger1 = time >= 2
+ignorehitpause = 1
+
+[State 15105, StateTypeSet]
+type = StateTypeSet
+trigger1 = time >= 2
+movetype = I
+physics = N
+
+[State 15105, ChangeState]
+type = ChangeState
+Triggerall = time > 2
+trigger1 = pos y >= -1
+value = 15106
+
+[State 15105, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Land
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Land
+[Statedef 15106]
+type = S
+physics = S
+ctrl = 0
+velset = 0,0
+anim = 15106
+sprpriority = 2
+
+[State 15106, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15106, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15106, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15106, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S52,1
+volume = 200
+
+[State 15106, VelSet]
+type = VelSet
+trigger1 = Time = 0
+y = 0
+
+[State 15106, PosSet]
+type = PosSet
+trigger1 = Time = 0
+y = 0
+
+[State 15106, Explod]
+type = Explod
+Triggerall = vel x = 0
+trigger1 = time = 0
+anim = 7132
+ID = 15106
+pos = -1,1
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .5,.5
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 15106, Explod]
+type = Explod
+Triggerall = vel x != 0
+trigger1 = time = 0
+anim = 7132
+ID = 15106
+pos = ifelse(vel x > 0,5,-6),1
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .5,.5
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 15106, ChangeState]
+type = ChangeState
+trigger1 = Time = 7
+value = 15000
+
+[State 15106, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Jump Start
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Jump Start
+[Statedef 15040]
+type = A
+movetype = I
+physics = N
+anim = 15040
+velset = 3,-6
+ctrl = 0
+poweradd = 0
+juggle = 0
+facep2 = 0
+hitdefpersist = 0
+movehitpersist = 0
+hitcountpersist = 0
+sprpriority = 2
+
+[state 20]
+type = PlaySnd
+trigger1 = animelem = 2
+value = s0,1+(random%3)
+volume = 200
+
+[State 15040, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15040, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15040, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15801,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[state 15040, CtrlSet]
+type = CtrlSet
+trigger1 = Time >= 1
+value = 1
+
+[state 15040, VelAdd]
+type = VelAdd
+trigger1 = Time > 10
+x = 0
+y = .50
+
+[State 15040, PlaySnd]
+type = PlaySnd
+trigger1 =  time = 1
+value = s40,1
+volume = 50
+
+[State 15040, ChangeState]
+type = ChangeState
+Triggerall = time > 8 && enemy,statetype = A
+Triggerall = parent,power >= 30
+trigger1 = p2bodydist x <= 50 && time >= 9 && random <= 150
+trigger2 = p2bodydist x <= 40 && p2bodydist y <= -20 && random <= 200
+value = 15600
+
+[state 15040, ChangeState]
+type = ChangeState
+Triggerall = time > 2
+trigger1 = Pos Y > -5
+value = 15106
+
+[State 15040, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Combo
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Combo 1 - 1
+[Statedef 15100]
+type    = S
+movetype= A
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 15100
+poweradd = 3
+sprpriority = 2
+
+[State 0, Humo]
+type = Explod
+trigger1 = time = 10
+anim = 3540
+ID = 3540
+pos = 0,-40
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = 1,1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+removeongethit = 0
+supermove = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 10
+value = S5,23
+volume = 50
+
+[State 15100, VelSet]
+type = VelSet
+trigger1 = time = 25
+x = 2
+
+[State 15100, HitDef]
+type = HitDef
+Triggerall = !movecontact
+trigger1 = 1
+attr = S, NA
+animtype  = Light
+damage    = 10
+Hitflag = MAFDE
+guardflag = MA
+pausetime = 10,10
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S1,4
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -2
+air.velocity = -2,-2
+Fall = 0
+envshake.time = 5
+sprpriority = 2
+
+[State 15100, StateTypeSet]
+type = StateTypeSet
+trigger1 = movecontact
+statetype = S       
+movetype = I        
+physics = S         
+ignorehitpause = 1
+
+[State 15100, Explod]
+type = Explod
+Triggerall = Numexplod(15100) = 0
+trigger1 = Movehit = 1
+anim = 7001
+ID = 15100
+postype = P1
+pos = 36,-15
+facing = 1
+sprpriority = 2
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.4,0.4
+removeongethit = 1
+ontop = 1
+ignorehitpause  = 1
+
+[State 15100, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15100, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15100, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15100, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+[State 15100, ChangeState]
+type = ChangeState
+Triggerall = animtime != 0
+trigger1 = movehit = 1
+value = 15200
+
+[State 15100, ChangeState]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 15110
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Combo
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Combo 1 - 1
+[Statedef 15110]
+type    = S
+movetype= A
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 15110
+poweradd = 3
+sprpriority = 2
+
+[State 0, Humo]
+type = Explod
+trigger1 = time = 10
+anim = 3540
+ID = 3540
+pos = 0,-40
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = 1,1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+removeongethit = 0
+supermove = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 10
+value = S5,23
+volume = 50
+
+[State 15100, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15100, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+[State 15100, ChangeState]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 15000
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Combo
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Combo 1 - 2
+[Statedef 15200]
+type    = S
+movetype= A
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 15200
+poweradd = 3
+sprpriority = 2
+
+[State 0, Humo]
+type = Explod
+trigger1 = time = 30
+anim = 3540
+ID = 3540
+pos = 0,-40
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = 1,1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+removeongethit = 0
+supermove = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 30
+value = S5,23
+volume = 50
+
+[State 15300, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15300, PlayerPush]
+type = PlayerPush
+trigger1 = time < 16
+value = 0
+
+[State 15300, VelSet]
+type = VelSet
+trigger1 = time = 7
+x = 4
+
+[State 15300, HitDef]
+type = HitDef
+Triggerall = !movecontact
+trigger1 = 1
+attr = S, NA
+animtype  = up
+damage    = 20
+Hitflag = MAFDE
+guardflag = MA
+pausetime = 10,10
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S2,3
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -1,-10
+air.velocity = -1,-10
+Fall = 1
+Fall.recover = 1
+Fall.recovertime = 30
+envshake.time = 15
+sprpriority = 2
+
+[State 15300, StateTypeSet]
+type = StateTypeSet
+trigger1 = movecontact
+statetype = S       ;S,A,C,L
+movetype = I        ;I,A,H
+physics = S         ;A,C,S,N
+ignorehitpause = 1
+
+[State 15100, Explod]
+type = Explod
+Triggerall = Numexplod(15100) = 0
+trigger1 = Movehit = 1
+anim = 7001
+ID = 15100
+postype = P1
+pos = 36,-15
+facing = 1
+sprpriority = 2
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.4,0.4
+removeongethit = 1
+ontop = 1
+ignorehitpause  = 1
+
+[State 15300, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15300, ChangeState]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 15000
+
+[State 15300, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Katon
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Katon
+[Statedef 15400]
+type    = S
+movetype= A
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 15400
+poweradd = -20
+sprpriority = 3
+
+[State 15400, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15400, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15400, Explod]
+type = Explod
+trigger1 = time = 6
+anim = 15401
+ID = 15401
+pos = 35,-45
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .2,.2
+sprpriority = 4
+ontop = 0
+ownpal = 1
+removeongethit = 1
+
+[State 15400, Explod]
+type = Explod
+trigger1 = time = 6
+anim = 15402
+ID = 15400
+pos = -25,5
+postype = p1
+vel = -.5,0
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .7,.7
+sprpriority = 3
+ontop = 0
+ownpal = 1
+trans = addalpha
+alpha = 200,256
+removeongethit = 0
+
+[State 15400, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,16
+volume = 50
+
+[State 15400, Helper]
+type = Helper
+trigger1 = time = 6
+trigger2 = time = 14
+helpertype = normal
+name = "Katon Gokakyu"
+ID = 15450
+stateno = 15450
+pos = 0,0
+postype = p1
+facing = 1
+keyctrl = 0
+ownpal = 1
+
+[State 15400, ChangeAnim]
+type = ChangeAnim
+trigger1 = time > 6 && numhelper(15450) > 0
+value = 15400
+elem = 3
+
+[State 15400, ChangeAnim]
+type = ChangeAnim
+Triggerall = animelem !>= 4
+trigger1 = time > 6 && numhelper(15400) = 0
+value = 15400
+elem = 4
+
+[State 15400, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15400, ChangeState]
+type = ChangeState
+trigger1 = animtime = 0
+value = 15000
+
+[State 15400, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Katon
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Gokakyu
+[Statedef 15450]
+type    = S
+movetype= I
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 15403
+sprpriority = 3
+
+[State 15450, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,30
+volume = 50
+
+[State 15450, EnvShake]
+type = EnvShake
+trigger1 = time = 0
+time = 10
+
+[State 15450, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = Noshadow
+Ignorehitpause = 1
+
+[State 15450, Trans]
+type = Trans
+trigger1 = 1
+trans = add
+Ignorehitpause = 1
+
+[State 15450, BindToParent]
+type = BindToParent
+trigger1 = 1
+pos = 5,-45
+ignorehitpause = 1
+
+[State 15450, StateTypeSet]
+type = StateTypeSet
+trigger1 = time = 5
+statetype = S
+movetype = A
+physics = N
+
+[State 15450, StateTypeSet]
+type = StateTypeSet
+trigger1 = time = 25
+statetype = S
+movetype = I
+physics = N
+
+[State 15450, HitDef]
+type = HitDef
+trigger1 = timemod = 4,0
+attr = S, NP
+animtype  = Heavy
+damage    = 4,2
+guardflag = MA
+Hitflag = MAFDE
+pausetime = 0,ifelse(time > 21,5,0)
+sparkno = -1
+guard.sparkno = -1
+sparkxy = -8,-5
+hitsound   = -1
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = ifelse(time > 21,-4,-6),ifelse(time > 21,-4,-6)
+air.velocity = -2,-1
+Fall = ifelse(time > 21,1,0)
+sprpriority = 3
+Palfx.time = 30
+Palfx.add = 40,-70,-200
+Palfx.sinadd = 40,30,0,10
+Palfx.color = 0
+Palfx.invertall = 1
+Fall.recover = 0
+Envshake.time = ifelse(time > 21,10,0)
+
+[State 15450, Helper]
+type = Helper
+Triggerall = numhelper(15480) = 0
+trigger1 = movecontact = 1
+helpertype = normal
+name = "Fuego en P2"
+ID =  15480
+stateno = 15480
+pos = 500,500
+postype = p2
+facing = 1
+keyctrl = 0
+ownpal = 1
+
+[State 15450, Destroyself]
+type = Destroyself
+trigger1 = AnimTime = 0
+trigger2 = parent,stateno != 15400
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Katon
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Fuego en P2
+[Statedef 15480]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = 2
+
+[State 15480, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+trigger2 = time = 30
+value = S5,24
+volume = 999
+
+[State 15480, Explod]
+type = Explod
+trigger1 = timemod = 2,0
+anim = 15404
+ID = 15404
+pos = -10+(random%20),-10-(random%20)
+postype = p2
+facing = -1
+vfacing = 1
+bindtime = 5
+removetime = -2
+scale = .15,.15
+sprpriority = 3
+ontop = 1
+ownpal = 1
+removeongethit = 0
+
+[State 15480, Destroyself]
+type = Destroyself
+trigger1 = time = 80
+trigger2 = p2movetype != H
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Shuriken
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Shuriken - Start
+[Statedef 15500]
+type    = S
+movetype= I
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 15500
+sprpriority = 2
+
+[State 15500, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15500, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15500, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S0,6
+
+[State 15500, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,5
+
+[State 15500, Helper]
+type = Helper
+trigger1 = time = 2
+helpertype = normal
+name = "Shuriken"
+ID = 15550
+stateno = 15550
+pos = 20,-45
+postype = p1
+facing = 1
+keyctrl = 0
+ownpal = 1
+size.xscale = 0.4
+size.yscale = 0.4
+
+[State 15500, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15500, ChangeState]
+type = ChangeState
+trigger1 = animtime = 0
+value = 15000
+
+[State 15500, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Shuriken
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Shurikens
+[Statedef 15550]
+type    = S
+movetype= A
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 15501
+sprpriority = 3
+
+[State 15550, VelSet]
+type = VelSet
+trigger1 = 1
+x = 15
+
+[State 15550, AngleDraw]
+type = AngleDraw
+trigger1 = pos y < -7
+value = -10-time*50
+
+[State 15550, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 15556
+time = 9999999999
+ignorehitpause = 1
+
+[State 15550, Afterimage]
+type = AfterImage
+trigger1 = time = 0
+time = 1000
+trans = Add
+length = 10
+timegap = 0
+framegap = 1
+palbright = 0 , 0 , 0
+palcontrast = 100, 100, 100
+paladd = 0,0,0
+palmul = .90, .90, .90
+ignorehitpause = 1
+
+[State 15550, HitDef]
+type = HitDef
+Triggerall = !movecontact
+trigger1 = 1
+attr = S, NP
+animtype  = light
+damage    = 10,5
+guardflag = MA
+pausetime = 0,5
+sparkno = -1
+guard.sparkno = -1
+sparkxy = 0,0
+hitsound   = S1,14
+guardsound = -1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -3
+air.velocity = -3
+Fall = 0
+getpower = 0,0
+sprpriority = 3
+
+[State 15550, Explod]
+type = Explod
+Triggerall = Numexplod(15550) = 0
+trigger1 = Movehit = 1
+anim = 7001
+ID = 15550
+postype = P1
+pos = 3,0
+facing = ifelse(random < 500,1,-1)
+sprpriority = 3
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.3,0.3
+removeongethit = 1
+ontop = 1
+ignorehitpause  = 1
+
+[State 15550, EnvShake]
+type = EnvShake
+trigger1 = movecontact = 1
+trigger2 = frontedgebodydist <= -10
+time = 5
+ampl = -4
+
+[State 15550, ChangeState]
+type = ChangeState
+trigger1 = movehit = 1
+value = 15555
+
+[State 15550, ChangeState]
+type = ChangeState
+trigger1 = frontedgebodydist <= -10
+trigger2 = moveguarded = 1
+value = 15556
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Shuriken
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Shuriken Falling I
+[StateDef 15555]
+type    = S
+movetype= I
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 15502
+sprpriority = 3
+
+[State 15555, AngleDraw]
+type = AngleDraw
+trigger1 = pos y < -7
+value = -10-time*50
+
+[State 15555, Gravity]
+type = Gravity
+trigger1 = pos y < 0
+
+[State 15555, VelSet]
+type = VelSet
+trigger1 = !time
+x = -1-random%3
+y = -3-random%2
+
+[State 15555, Afterimage]
+type = AfterImage
+trigger1 = time = 0
+time = 1000
+trans = Add
+length = 10
+timegap = 1
+framegap = 1
+palbright = 0 , 0 , 0
+palcontrast = 100, 100, 100
+paladd = 0,0,0
+palmul = .90, .90, .90
+ignorehitpause = 1
+
+[State 15555, AssertSpecial]
+type = AssertSpecial
+trigger1 = pos y >= -7
+flag = noshadow
+ignorehitpause = 1
+
+[State 15555, VelSet]
+type = VelSet
+trigger1 = Pos Y >= -7
+x = 0
+y = 0
+
+[State 15555, PosSet]
+type = PosSet
+trigger1 = Pos Y >= -7
+y = 0
+
+[State 15555, ChangeState]
+type = ChangeState
+trigger1 = pos y >= -7
+value = 15557
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Shuriken
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Shuriken Falling II
+[StateDef 15556]
+type    = S
+movetype= I
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 15502
+sprpriority = 3
+
+[State 15556, PlaySnd]
+type = PlaySnd
+trigger1 = !time
+value = S1,16
+volume = 200
+
+[State 15556, Explod]
+type = Explod
+trigger1 = !time
+trigger1 = Numexplod(15556) = 0
+anim = 7700
+ID = 15556
+postype = P1
+pos = 0,0
+facing = -1
+vfacing = 1
+sprpriority = 3
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.4,0.4
+removeongethit = 0
+ontop = 1
+ignorehitpause  = 1
+
+[State 15556, AngleDraw]
+type = AngleDraw
+trigger1 = pos y < -7
+value = -10-time*50
+
+[State 15556, Gravity]
+type = Gravity
+trigger1 = pos y < 0
+
+[State 15556, VelSet]
+type = VelSet
+trigger1 = !time
+x = -1-random%3
+y = -3-random%2
+
+[State 15556, Afterimage]
+type = AfterImage
+trigger1 = time = 0
+time = 1000
+trans = Add
+length = 10
+timegap = 1
+framegap = 1
+palbright = 0 , 0 , 0
+palcontrast = 100, 100, 100
+paladd = 0,0,0
+palmul = .90, .90, .90
+ignorehitpause = 1
+
+[State 15556, AssertSpecial]
+type = AssertSpecial
+trigger1 = pos y >= -7
+flag = noshadow
+ignorehitpause = 1
+
+[State 15556, VelSet]
+type = VelSet
+trigger1 = Pos Y >= -7
+x = 0
+y = 0
+
+[State 15556, PosSet]
+type = PosSet
+trigger1 = Pos Y >= -7
+y = 0
+
+[State 15556, ChangeState]
+type = ChangeState
+trigger1 = pos y >= -7
+value = 15557
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Shuriken
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Shuriken On The Floor
+[StateDef 15557]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 15503
+sprpriority = 3
+
+[State 15557, PosSet]
+type = PosSet
+trigger1 = 1
+y = 0
+
+[State 15557, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S1,19
+
+[State 15557, Explod]
+type = Explod
+trigger1 = time = 0
+anim = 704
+ID = 15557
+pos = 0,3
+postype = p1
+facing = -1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = 0.1,0.1
+sprpriority = 4
+ontop = 0
+ownpal = 1
+
+[State 15557, Afterimage]
+type = AfterImage
+trigger1 = time = 0
+time = 0
+trans = Add
+length = 10
+timegap = 1
+framegap = 1
+palbright = 0 , 0 , 0
+palcontrast = 100, 100, 100
+paladd = 0,0,0
+palmul = .90, .90, .90
+ignorehitpause = 1
+
+[State 15557, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+ignorehitpause = 1
+
+[State 15557, DestroySelf]
+type = DestroySelf
+trigger1 = AnimTime = 0
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Air Ataque
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Air Ataque Start
+[Statedef 15600]
+type = A
+movetype = A
+physics = N
+juggle = 1
+ctrl = 0
+anim = 15600
+poweradd = -20
+sprpriority = 2
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 0
+y = -2
+
+[State 0, Humo]
+type = Explod
+trigger1 = time = 15
+anim = 3540
+ID = 3540
+pos = 0,-40
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = 1,1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+removeongethit = 0
+supermove = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 15
+value = S5,23
+volume = 50
+
+[State 15600, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15801,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 670, Helper]
+type = Helper
+trigger1 = time = 25
+helpertype = player
+name = "Kunai"
+ID = 15620
+stateno = 15620
+pos = 31,-30
+postype = p1    
+facing = 1
+keyctrl = 0
+ownpal = 1
+
+[State 15600, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+[State 15600, ChangeState]
+type = ChangeState
+trigger1 = animtime = 0
+value = 15610
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Air Ataque
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Air Ataque Finish
+[Statedef 15610]
+type    = A
+movetype= I
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 15601
+sprpriority = 2
+
+[State 15610, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15801,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15610, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+
+[State 15610, AngleDraw]
+type = AngleDraw
+trigger1 = time < 20
+value = 1+(time*60)
+ignorehitpause = 0
+
+[State 15610, PlaySnd]
+type = PlaySnd
+trigger1 = time%8 = 0
+trigger2 = time = 0
+value = S5,5
+volume = 50
+
+[State 15610, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = -3
+y = -5
+
+[State 15610, Gravity]
+type = Gravity
+trigger1 = 1
+
+[State 15610, AngleDraw]
+type = AngleDraw
+trigger1 = time = 20
+value = 0
+
+[State 15610, ChangeAnim]
+type = ChangeAnim
+trigger1 = time = 20
+value = 15610
+
+[state 15610, ChangeState]
+type = ChangeState
+Triggerall = time >= 20
+trigger1 = Pos Y > -5
+value = 15106
+
+[State 15610, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Air Ataque
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Bastao Start
+[Statedef 15620]
+type = S
+movetype = A
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 15620
+sprpriority = 3
+
+[State 675, VelSet]
+type = VelSet
+trigger1 = pos y <= -15
+x = 12
+y = 15
+ignorehitpause = 1
+
+[State 675, VelSet]
+type = VelSet
+trigger1 = pos y > -15
+x = 0
+y = 0
+ignorehitpause = 1
+
+[State 675, AngleDraw]
+type = AngleDraw
+trigger1 = 1
+value = -50
+ignorehitpause = 1
+
+[State 675, Afterimage]
+type = AfterImage
+trigger1 = time = 0
+time = 1000
+trans = Add
+length = 10
+timegap = 0
+framegap = 1
+palbright = 0 , 0 , 0
+palcontrast = 100, 100, 100
+paladd = 0,0,0
+palmul = .90, .90, .90
+ignorehitpause = 1
+
+[State 675, HitDef]
+type = HitDef
+Triggerall = !movecontact
+trigger1 = 1
+attr = S, NP
+animtype = light
+damage = 0,0
+guardflag = MA
+hitflag = MAFDE
+pausetime = 0,5
+sparkno = -1
+guard.sparkno = -1
+sparkxy = 0,0
+hitsound = S7,4
+guardsound = -1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -3
+air.velocity = -3,-1
+Fall = 0
+getpower = 0,0
+sprpriority = 3
+
+[State 675, StateTypeSet]
+type = StateTypeSet
+trigger1 = movecontact
+statetype = S       
+movetype = I        
+physics = S
+ignorehitpause = 1
+
+[State 675, Explod]
+type = Explod
+Triggerall = Numexplod(7001) = 0
+trigger1 = Movehit = 1
+anim = 7001
+ID = 7001
+postype = P1
+pos = 3,0
+facing = ifelse(random < 500,1,-1)
+sprpriority = 2
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.3,0.3
+removeongethit = 1
+ontop = 1
+ignorehitpause  = 1
+
+[State 675, VelSet]
+type = VelSet
+trigger1 = Pos Y >= -15
+x = 0
+y = 0
+
+[State 675, PosSet]
+type = PosSet
+trigger1 = Pos Y >= -15
+y = 0
+
+[State 675, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 15625
+time = 999999999999
+forceair = 0
+ignorehitpause = 1
+
+[State 675, ChangeState]
+type = ChangeState
+trigger1 = frontedgebodydist < -5
+trigger2 = moveguarded
+value = 15625
+
+[State 675, ChangeState]
+type = ChangeState
+trigger1 = pos y >= -15
+value = 15625
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Air Ataque
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Bastao Finish
+[Statedef 15625]
+type = S
+movetype = A
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = 3
+
+[State 0, Humo]
+type = Explod
+trigger1 = time = 0
+anim = 3540
+ID = 3540
+pos = 0,-40
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = 1,1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+removeongethit = 0
+supermove = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,23
+volume = 50
+
+[State 15655, Destroyself]
+type = Destroyself
+trigger1 = time = 10
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Dash
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Dash
+[Statedef 15700]
+type    = S
+movetype= I
+physics = S
+ctrl = 0
+velset = 0,0
+anim = 15008
+poweradd = 0
+
+[State 15700]
+type = Explod
+trigger1 = time = 2
+anim = 9028
+ID = 101
+pos = 0,-30
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -2
+scale = .5,.5
+sprpriority = -1
+ontop = 0
+ownpal = 1
+removeongethit = 1
+ignorehitpause = 1
+
+[State 15700]
+type = PlaySnd
+trigger1 = time = 2
+value = S0,22
+volume = 50
+
+[State 15700]
+type = ScreenBound
+trigger1 = 1
+value = 1
+
+[State 15700]
+type = AssertSpecial
+trigger1 = 1
+flag = noautoturn
+
+[State 15700]
+type = PosAdd
+trigger1 = animelem = 3
+x = P2BodyDist X + 50
+y = 0
+
+[State 15700]
+type = Turn
+trigger1 = animelem = 3
+trigger1 = p2dist x < 0
+
+[State 15700, Finish]
+type = ChangeState
+trigger1 = parent,life = 0
+value = 15001
+
+[State 15700, Finish]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = win || lose || drawgame
+value = 15010
+
+[State 15700, End]
+type = ChangeState
+trigger1 = animtime = 0
+value = 15000
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Power Charge Start
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Power Charge - Start
+[Statedef 15750]
+type = S
+movetype = I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 15006
+sprpriority = 2
+
+[State 15750, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15750, PowerAdd]
+type = PowerAdd
+trigger1 = 1
+value = 10
+
+[State 15750, Helper]
+type = Helper
+trigger1 = time = 0
+helpertype = normal
+name = "Aura"
+ID = 15755
+stateno = 15755
+pos = 0,0
+postype = p1
+facing = 1
+keyctrl = 0
+ownpal = 1
+size.xscale = 1
+size.yscale = 1
+
+[State 15750, ChangeState]
+type = ChangeState
+Triggerall = time >= 6
+trigger1 = time = 100+random%900
+trigger2 = parent,power = 3000
+trigger3 = p2movetype = A && p2bodydist x <= 50
+trigger4 = parent,movetype = H
+trigger5 = p2bodydist x <= 20 && random < 100
+value = 15751
+ctrl = 0
+
+[State 15750, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Power Charge Finish
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Power Charge - Fin
+[Statedef 15751]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 15007
+sprpriority = 2
+
+[State 15751, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = ifelse(parent,var(16) > 0,15800,15001)
+time = 99999999999999999999999999999999999999999
+ignorehitpause = 1
+
+[State 15751, ChangeState]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 15000
+
+[State 15751, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Aura Start
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Aura - Start
+[Statedef 15755]
+type = S
+movetype = I
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = 3
+
+[State 15755, Explod]
+type = Explod
+trigger1 = time = 3
+anim = 514
+ID = 15755
+pos = 0,-65
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = .3,.3
+sprpriority = 3
+ontop = 0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 15755, Explod]
+type = Explod
+trigger1 = time = 2
+anim = 513
+ID = 15755
+pos = 0,-55
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = .3,.2
+sprpriority = 3
+ontop = 0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 15755, Explod]
+type = Explod
+trigger1 = time = 2
+anim = 512
+ID = 15755
+pos = 0,-4
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = .5,.5
+sprpriority = 3
+ontop = 0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 15755, PlaySnd]
+type = PlaySnd
+trigger1 = timemod = 100,0
+value = S5,27
+volume = 50
+channel = 20
+
+[State 15755, BindToParent]
+type = BindToParent
+trigger1 = 1
+pos = 1,10
+
+[State 15755, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+
+[State 15755, Trans]
+type = Trans
+trigger1 = 1
+trans = addalpha
+alpha = 256,256
+
+[State 15755, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno != 15750
+value = 15756
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Aura Finish
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Aura - Fin
+[Statedef 15756]
+type    = S
+movetype= I
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = 3
+
+[State 15756, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = 15755
+
+[State 15756, StopSnd]
+type = StopSnd
+trigger1 = 1
+channel = 20
+
+[State 15756, BindToParent]
+type = BindToParent
+trigger1 = 1
+pos = 1,10
+
+[State 15756, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+
+[State 15756, Destroyself]
+type = Destroyself
+trigger1 = time = 1
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Hitted
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Hitted
+[Statedef 15800]
+type = S
+physics = S
+movetype = H
+sprpriority = -1
+
+[State 15800, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15800, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15800, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 15800
+time = 999999999999999999
+ignorehitpause = 1
+
+[State 15800, ParentVaradd]
+type = ParentVaradd
+trigger1 = time = 0
+v = 16
+value = -gethitvar(damage)
+
+[State 15800, PosSet]
+type = PosSet
+trigger1 = time = 0
+y = 0
+
+[State 15800, VelSet]
+type = VelSet
+trigger1 = time = 0
+y = 0
+
+[State 15800, VelSet]
+type = Veladd
+trigger1 = time = 0
+x = ifelse(facing = 1,gethitvar(xvel)/2,-gethitvar(xvel)/2)
+
+[State 15800, ChangeAnim]
+type = ChangeAnim
+trigger1 = 1
+value = 15003
+
+[State 15800, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) > 0 && Hitover
+value = 15105
+
+[State 15800, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) <= 0 && Hitover
+value = 15001
+
+[State 15800, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) <= 0
+value = 15001
+
+[State 15800, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+;  		                             Sarutobi Hiruzen - Hitted in Air
+;====================================================================================================================================
+;::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;====================================================================================================================================
+
+; Hitted in Air
+[Statedef 15801]
+type    = A
+physics = N
+movetype = H
+sprpriority = -1
+
+[State 15801, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15801, PlayerPush]
+type = PlayerPush
+trigger1 = 1
+value = 1
+ignorehitpause = 1
+
+[State 15801, Gravity]
+type = Gravity
+trigger1 = 1
+ignorehitpause = 1
+
+[State 15801, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 15801
+time = 999999999999999999
+ignorehitpause = 1
+
+[State 15801, ParentVaradd]
+type = ParentVaradd
+trigger1 = time = 0
+v = 16
+value = -gethitvar(damage)
+
+[State 15801, HitVelSet]
+type = HitVelSet
+trigger1 = time = 0
+x = 1
+y = 1
+
+[State 15801, ChangeAnim]
+type = ChangeAnim
+trigger1 = 1
+value = 15004
+
+[State 15801, ChangeState]
+type = ChangeState
+trigger1 = pos y >= -1
+trigger1 = parent,var(16) > 0 && Hitover
+value = 15000
+ctrl = 1
+
+[State 15801, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) <= 0 && Hitover
+value = 15001
+
+[State 15801, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) > 0 && Hitover
+value = 15040
+
+[State 15801, ChangeState]
+type = ChangeState
+trigger1 = pos y >= -1
+value = 15800
+
+[State 15801, ChangeState]
+type = ChangeState
+trigger1 = parent,var(16) <= 0
+value = 15001
+
+[State 15801, ChangeState]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = win || lose || drawgame
+value = 15001
+
+;===============================================================================
+; Life Bar
+;-------------------------------------------------------------------------------
+; Life Bar
+[Statedef 15900]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 9010
+poweradd = 0
+sprpriority = 2
+
+[State 15900, BindToParent]
+type = BindToParent
+trigger1 = 1
+time = 5
+pos = 0,-50
+ignorehitpause = 1
+
+[State 15900, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = invisible
+ignorehitpause = 1
+
+[State 15900,Explod]
+type = Explod
+Triggerall = numexplod(9010) = 0
+trigger1 = root,var(16) > 290
+anim = 9010
+ID = 9010
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 290
+id = 9010
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9009) = 0
+Triggerall = IsHelper
+trigger1 = root,var(16) < 290 & root,var(16) >= 270
+anim = 9009
+ID = 9009
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 270
+id = 9009
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9008) = 0
+Triggerall = IsHelper
+trigger1 = root,var(16) < 270 & root,var(16) >= 240
+anim = 9008
+ID = 9008
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 240
+id = 9008
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9007) = 0
+Triggerall = IsHelper
+trigger1 = root,var(16) < 240 & root,var(16) >= 210
+anim = 9007
+ID = 9007
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 210
+id = 9007
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9006) = 0
+Triggerall = IsHelper
+trigger1 = root,var(16) < 210 & root,var(16) >= 180
+anim = 9006
+ID = 9006
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 180
+id = 9006
+
+[State 15900, Explod]
+type = Explod
+Triggerall = IsHelper
+Triggerall = numexplod(9005) = 0
+trigger1 = root,var(16) < 180 & root,var(16) >= 150
+anim = 9005
+ID = 9005
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 150
+id = 9005
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9004) = 0
+trigger1 = root,var(16) < 150 & root,var(16) >= 120
+anim = 9004
+ID = 9004
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 120
+id = 9004
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9003) = 0
+trigger1 = root,var(16) < 120 & root,var(16) >= 90
+anim = 9003
+ID = 9003
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = IsHelper
+trigger1 = root,var(16) < 90
+id = 9003
+
+[State 0, Explod]
+type = Explod
+Triggerall = IsHelper
+Triggerall = numexplod(9002) = 0
+trigger1 = root,var(16) < 90 & root,var(16) >= 60
+anim = 9002
+ID = 9002
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = root,var(16) < 60
+id = 9002
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9001) = 0
+trigger1 = root,var(16) < 60 & root,var(16) >= 30
+anim = 9001
+ID = 9001
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+trigger1 = root,var(16) < 30
+id = 9001
+
+[State 15900, Explod]
+type = Explod
+Triggerall = numexplod(9000) = 0
+trigger1 = root,var(16) < 30 & root,var(16) >= 0
+anim = 9000
+ID = 9000
+pos = 0,-45
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+scale = 0.8,0.8
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+trigger1 = root,var(16) <= 0
+trigger2 = root,var(16) > 30
+id = 9000
+
+[State 15900, RemoveExplod]
+type = RemoveExplod
+Triggerall = parent,stateno = 15001
+trigger1 = 1
+id = -1
+supermove = 99999999999999999
+pausemove = 99999999999999999
+supermovetime = 9999999999999
+pausemovetime = 9999999999999
+
+[State 15900, DestroySelf]
+type = DestroySelf
+Triggerall = NumExplod = 0
+trigger1 = parent,stateno = 15001
+ignorehitpause = 1
+
+[State 15900, ChangeState]
+type = ChangeState
+trigger1 = Root,Numhelper(15000) = 0
+value = 15901
+ignorehitpause = 1
+;-------------------------------------------------------------------------------
+; Life Bar Fin
+[Statedef 15901]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 9010
+poweradd = 0
+sprpriority = 2
+
+[State 15901, RemoveExplod]
+type = RemoveExplod
+trigger1 = 1
+id = -1
+ignorehitpause = 1
+supermove = 99999999999999999
+pausemove = 99999999999999999
+supermovetime = 9999999999999
+pausemovetime = 9999999999999
+
+[State 15901, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = invisible
+
+[State 15901, DestroySelf]
+type = DestroySelf
+trigger1 = time > 3
+ignorehitpause = 1

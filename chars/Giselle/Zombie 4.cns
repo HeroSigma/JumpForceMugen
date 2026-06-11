@@ -1,0 +1,1079 @@
+; Zombie - Stand
+[Statedef 14000]
+type = S
+physics = S
+anim = 14001
+sprpriority = 0
+
+[state 0,AngleDraw]
+type = AngleDraw
+trigger1 = 1
+scale = 1, 1 + (sin((time/ 50.0) * (pi / 2)) * 0.0125)
+value = 0
+ignorehitpause = 1
+
+[State 0, Helper Tiempo]
+type = Helper
+trigger1 = prevstateno = 14002 && time = 0
+helpertype = normal
+name = "Helper Tiempo"
+ID = 33200
+stateno = 33200
+pos = 0,0
+postype = p1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = parent,var(17) <= 0
+value = 14001
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14220
+time = 9999
+
+[State 0, Turn]
+type = Turn
+trigger1 = p2bodydist x < -5
+
+[State 0, 2]
+type = VelSet
+trigger1 = Time = 0
+y = 0
+
+[State 0, 3]
+type = VelSet
+trigger1 = abs(vel x) < 2
+trigger2 = Time = 4
+x = 0
+
+[State 200, Zombie - Fin]
+type = ChangeState
+trigger1 = parent,stateno = 170
+trigger2 = parent,stateno = 181
+trigger3 = parent,life = 0
+trigger4 = numhelper(33200) = 0
+value = 14001
+
+[State 200, Zombie - Run]
+type = ChangeState
+triggerall = time > 20
+trigger1 = p2bodydist x > 30 && random < 700
+value = 14020
+
+[State 200, Jump Back]
+type = ChangeState
+triggerall = time > 10
+trigger1 = p2movetype = A && random < 100 && p2bodydist x < 50
+trigger2 = random < 100 && p2bodydist x < 30
+value = 14041
+
+[State 200, Zombie Correr Adelante]
+type = ChangeState
+triggerall = time > 20
+trigger1 = p2statetype = A && random < 100 && p2bodydist x < 70
+value = 14040
+
+;-------------------!Attacks Zombie!------------------
+[State -1, Hit 1]
+type = changestate
+triggerall = StateType = S
+triggerall = (p2statetype = S) || (p2statetype = C)|| (p2statetype = A)
+triggerall = P2BodyDist X <= 30
+trigger1 = Random < 100
+value = 14200
+;-------------------------------------------------------------------------------
+; Evitador de Infinitos
+[Statedef 14285]
+type    = S
+movetype= I
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = 2
+
+
+[State 200, End]
+type = Destroyself
+trigger1 = time = 500
+;-------------------------------------------------------------------------------
+; Helper Tiempo
+[Statedef 33200]
+type    = S
+movetype= I
+physics = N
+juggle  = 1
+anim = 9999
+
+[State 200, End]
+type = Destroyself
+triggerall = numhelper(14000) = 0
+trigger1 = 1
+
+[State 200, End]
+type = Destroyself
+trigger1 = time >= 3000
+;---------------------------------------------------------------------------
+; Zombie - Fin
+[Statedef 14001]
+type    = S
+movetype= I
+physics = S
+juggle  = 1
+ctrl = 0
+anim = 14002
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = 1
+value = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+time = 999
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[state 0,AngleDraw]
+type = AngleDraw
+trigger1 = 1
+scale = 1, 1 + (sin((time/ 50.0) * (pi / 2)) * 0.0125)
+value = 0
+ignorehitpause = 1
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = Animelem = 2
+value = S5,87
+volumescale = 350
+
+[State 0, Blood PFX]
+type = Helper
+trigger1 = Animelem = 2
+name = "Blood PFX"
+ID = 1240
+stateno = 1240
+pos = 0,-30
+postype = p1
+facing = 1
+ownpal = 1
+size.xscale = .40
+size.yscale = .40
+supermovetime = 999
+pausemovetime = 999
+[State 0, Blood PFXSUB]
+type = Helper
+trigger1 = Animelem = 2
+name = "Blood PFXSUB"
+ID = 1241
+stateno = 1241
+pos = 0,-30
+postype = p1
+facing = 1
+ownpal = 1
+size.xscale = .40
+size.yscale = .40
+supermovetime = 999
+pausemovetime = 999
+
+[State 200, End]
+type = Destroyself
+trigger1 = animtime = 0
+;---------------------------------------------------------------------------
+; Zombie - Intro
+[Statedef 14002]
+type = S
+physics = S
+sprpriority = 10
+
+[State 0]
+type = envshake
+trigger1 = animelemtime(1) = 0
+time = 10
+freq = 80
+
+[State 0,StateTypeSet]
+type = StateTypeSet
+trigger1 = AnimElemTime(1)=0
+statetype = A
+movetype = A
+physics = N
+ignorehitpause = 1
+
+[State 0,StateTypeSet]
+type = StateTypeSet
+trigger1 = AnimElemTime(2)=0
+statetype = S
+movetype = A
+physics = S
+ignorehitpause = 1
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = Animelem = 1
+value = S5,7
+volumescale = 400
+
+[State 0, Fx]
+type = Explod
+trigger1 = Animelem = 1
+anim = 7025
+ID = 7025
+pos = 0,-24
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .5,.5
+removeongethit = 1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+removeongethit = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+[State 0, Fx]
+type = Explod
+trigger1 = Animelem = 1
+anim = 7025
+ID = 7025
+pos = -5,-24
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .5,.5
+removeongethit = 1
+sprpriority = 2
+ontop = 1
+ownpal = 1
+trans = add
+removeongethit = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+
+[State 0,Explod]
+type = Explod
+TriggerALL = Pos Y = 0
+trigger1 = AnimElem = 2
+anim = 7022
+ID = 7022
+pos = -6,7
+postype = p1
+facing = 1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 1
+ontop = 0
+ownpal = 1
+vel = -.25
+removeongethit = 1
+PauseMoveTime = 99999
+SuperMoveTime = 99999
+[State 0,Explod]
+type = Explod
+TriggerALL = Pos Y = 0
+trigger1 = AnimElem = 2
+anim = 7022
+ID = 7022
+pos = 6,7
+postype = p1
+facing = -1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 1
+ontop = 0
+ownpal = 1
+vel = .25
+removeongethit = 1
+PauseMoveTime = 99999
+SuperMoveTime = 99999
+
+[State 0,Explod]
+type = Explod
+TriggerALL = Pos Y = 0
+trigger1 = AnimElem = 2
+anim = 7022
+ID = 7022
+pos = -6,7
+postype = p1
+facing = 1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 0
+ontop = 0
+ownpal = 1
+vel = -.25
+trans = sub
+removeongethit = 1
+PauseMoveTime = 99999
+SuperMoveTime = 99999
+[State 0,Explod]
+type = Explod
+TriggerALL = Pos Y = 0
+trigger1 = AnimElem = 2
+anim = 7022
+ID = 7022
+pos = 6,7
+postype = p1
+facing = -1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 0
+ontop = 0
+ownpal = 1
+vel = .25
+trans = sub
+removeongethit = 1
+PauseMoveTime = 99999
+SuperMoveTime = 99999
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = 1
+value = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+time = 5
+
+[State 0, ChangeAnim]
+type = ChangeAnim
+trigger1 = time = 0
+value = 14000
+
+[State 0, ParentVarSet]
+type = ParentVarSet
+trigger1 = time = 0
+v = 17
+value = 1000
+
+[State 200, Stand]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 14000
+;---------------------------------------------------------------------------
+; Zombie - Run
+[Statedef 14020]
+type    = S
+physics = S
+anim = 14020
+sprpriority = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = parent,var(17) <= 0
+value = 14001
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14220
+time = 9999
+
+[State 100, 1]
+type = VelSet
+trigger1 = 1
+x = const(velocity.walk.fwd.x)
+
+[State 0, Explod]
+type = Explod
+trigger1 = timemod = 18,0 && time > 5 && pos y = 0
+anim = 7022
+ID = 1051
+pos = 0,0
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .2,.2
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 1
+[State 0, Explod]
+type = Explod
+trigger1 = timemod = 18,0 && time > 5 && pos y = 0
+anim = 7022
+ID = 1051
+pos = 0,0
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .2,.2
+sprpriority = 0
+ontop = 0
+ownpal = 1
+trans = sub
+removeongethit = 1
+
+[State 200, Jump]
+type = ChangeState
+triggerall = time > 5
+trigger1 = p2statetype = A && random < 100 && p2bodydist x < 70
+value = 14040
+
+[State 100: ChangeState]
+type = ChangeState
+trigger1 = p2bodydist x < 30
+value = 14000
+;---------------------------------------------------------------------------
+; Zombie - Land
+[Statedef 14106]
+type    = S
+physics = S
+ctrl = 0
+anim = 14047
+
+[State 60, PlaySnd]
+type = PlaySnd
+trigger1 =  time = 1
+value = s52,1
+volume = 600
+
+[State 0,Explod]
+type = Explod
+trigger1 = AnimElem = 1
+anim = 7022
+ID = 7022
+pos = -10,7
+postype = p1
+facing = 1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 1
+ontop = 0
+ownpal = 1
+vel = -.25
+removeongethit = 1
+
+[State 0,Explod]
+type = Explod
+trigger1 = AnimElem = 1
+anim = 7022
+ID = 7022
+pos = 6,7
+postype = p1
+facing = -1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 1
+ontop = 0
+ownpal = 1
+vel = .25
+removeongethit = 1
+
+[State 0,Explod]
+type = Explod
+trigger1 = AnimElem = 1
+anim = 7022
+ID = 7022
+pos = -10,7
+postype = p1
+facing = 1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 0
+ontop = 0
+ownpal = 1
+vel = -.25
+trans = sub
+removeongethit = 1
+
+[State 0,Explod]
+type = Explod
+trigger1 = AnimElem = 1
+anim = 7022
+ID = 7022
+pos = 6,7
+postype = p1
+facing = -1
+bindtime = 1
+removetime = -2
+scale = .28,.28
+sprpriority = 0
+ontop = 0
+ownpal = 1
+vel = .25
+trans = sub
+removeongethit = 1
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14220
+time = 9999
+
+[State 106, 1]
+type = VelSet
+trigger1 = Time = 0
+y = 0
+
+[State 106, 2]
+type = PosSet
+trigger1 = Time = 0
+y = 0
+
+[State 106, 3]
+type = MakeDust
+trigger1 = Time = 2
+pos = -5,-2
+spacing = 1
+
+[State 106, 4]
+type = ChangeState
+trigger1 = Time = 7
+value = 14000
+;---------------------------------------------------------------------------
+; Zombie Correr Adelante
+[Statedef 14040]
+type            = A
+movetype        = I
+physics         = N
+anim            = 14050
+velset          = 2.5,0
+ctrl            = 0
+poweradd        = 0
+juggle          = 0
+facep2          = 0
+hitdefpersist   = 0
+movehitpersist  = 0
+hitcountpersist = 0
+sprpriority     = 2
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14221
+time = 9999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 2
+value = S40,2
+volume = 999
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = animelem = 2
+x = 30
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = animelem = 5
+x = 2
+
+[State 0, Soru]
+type = Explod
+trigger1 = time = 2
+anim = 7025
+ID = 101
+pos = 0,-20
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -2
+scale = .4,.4
+sprpriority = -1
+ontop = 0
+ownpal = 1
+angle = -90
+removeongethit = 1
+ignorehitpause = 1
+Trans = sub
+[State 0, Soru]
+type = Explod
+trigger1 = time = 2
+anim = 7025
+ID = 101
+pos = 0,-25
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -2
+scale = .4,.4
+sprpriority = -1
+ontop = 0
+ownpal = 1
+angle = -90
+removeongethit = 1
+ignorehitpause = 1
+Trans = add
+
+[State 0, Air Dash Wave]
+type = Explod
+trigger1 = AnimElem = 1
+anim = 7065
+ID = 7065
+pos = -2,-36
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .2,.2
+sprpriority = 1
+ontop = 1
+ownpal = 1
+removeongethit = 1
+Vel = -.5,0
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 14106
+ctrl = 1
+;---------------------------------------------------------------------------
+; Zombie Correr Adelante - Back
+[Statedef 14041]
+type            = A
+movetype        = I
+physics         = N
+anim            = 14050
+velset          = 2.5,0
+ctrl            = 0
+poweradd        = 0
+juggle          = 0
+facep2          = 0
+hitdefpersist   = 0
+movehitpersist  = 0
+hitcountpersist = 0
+sprpriority     = 2
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, Turn]
+type = Turn
+trigger1 = 1
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14221
+time = 9999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 2
+value = S40,2
+volume = 999
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = animelem = 2
+x = 30
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = animelem = 5
+x = 2
+
+[State 0, Soru]
+type = Explod
+trigger1 = time = 2
+anim = 7025
+ID = 101
+pos = 0,-20
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -2
+scale = .4,.4
+sprpriority = -1
+ontop = 0
+ownpal = 1
+angle = -90
+removeongethit = 1
+ignorehitpause = 1
+Trans = sub
+[State 0, Soru]
+type = Explod
+trigger1 = time = 2
+anim = 7025
+ID = 101
+pos = 0,-25
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -2
+scale = .4,.4
+sprpriority = -1
+ontop = 0
+ownpal = 1
+angle = -90
+removeongethit = 1
+ignorehitpause = 1
+Trans = add
+
+[State 0, Air Dash Wave]
+type = Explod
+trigger1 = AnimElem = 1
+anim = 7065
+ID = 7065
+pos = -2,-36
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .2,.2
+sprpriority = 1
+ontop = 1
+ownpal = 1
+removeongethit = 1
+Vel = -.5,0
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 14106
+ctrl = 1
+;---------------------------------------------------------------------------
+;Hit 1
+[Statedef 14200]
+type    = S
+movetype= A
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 14200
+sprpriority = 2
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14220
+time = 9999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 13
+value = S5,55
+volumescale = 400
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 6
+x = 4
+
+[State 0,Swing - FX]
+type = Helper
+trigger1 = AnimelemTime(5)=0
+name = "Swing - FX"
+ID = 01
+stateno = 14205
+Pos = 35,-25
+postype = p1
+facing = 1
+ownpal = 1
+size.xscale = .1
+size.yscale = .1
+Size.Head.Pos = 0,0
+ignorehitpause = 1
+
+[State 0, Hit]
+type = PlaySnd
+trigger1 = MoveHit = 1
+value = S1,62+Random%7
+volumescale = 100
+ignorehitpause = 1
+Persistent = 0
+
+[State 200, 1]
+type = HitDef
+trigger1 =! MoveContact
+attr = S,NA
+hitflag = MAFD
+priority = 4,Hit
+guardflag = MA
+animtype = Heavy
+damage = 11,10
+pausetime = 10,12
+guard.pausetime = 9,7
+guard.sparkno = s7000
+sparkxy = -8,-25
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime = 15
+ground.velocity = -5
+air.velocity = -2,-2
+EnvShake.Time = 9
+EnvShake.Ampl = -9
+EnvShake.Freq = 18
+fall = 0
+GetPower = 45,15
+
+[State 0,Spark - 2]
+type = Helper
+trigger1 = MoveHit = 1
+helpertype = normal
+ID = 8031
+stateno = 8031
+pos = Cond((P2Dist X<75),P2Dist X+0,65),-25
+postype = P1
+facing = Cond(Random<500,1,-1)
+ownpal = 1
+size.xscale = .095
+size.yscale = .095
+Size.Head.Pos = (Random % 360), 15
+ignorehitpause = 1
+PERSISTENT = 0
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 14000
+ctrl = 1
+;-------------------------------------------------------------------------------
+; Swing - FX
+[Statedef 14205]
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 14205
+sprpriority = 3
+
+[State 0, PalFXWiz]
+Type = PalFX
+Triggerall = Root,Var(55) = 15
+Trigger1 = 1
+Time = -1
+Add = 0,-125,-125
+Mul = 512,512,512
+Color = 0
+
+[State 0,AngleDraw]
+type = AngleDraw
+trigger1 = 1
+value = Const(Size.Head.Pos.X)
+
+[State 0, Trans]
+type = Trans
+trigger1 = 1
+trans = Add
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+
+[State 0, PalFXWiz]
+Type = PalFX
+TriggerAll = IsHelper(02)
+Trigger1 = 1
+Time = -1
+Add = 0,0,0
+Mul = 256,256,256
+Color = 0
+
+[State 0, Trans]
+type = Trans
+TriggerAll = IsHelper(02)
+trigger1 = 1
+trans = Sub
+
+[State 0, SprPriority]
+type = SprPriority
+TriggerAll = IsHelper(02)
+trigger1 = 1
+value = 2
+
+[State 0,Swing - FXSUB]
+type = Helper
+TriggerAll = IsHelper(01)
+trigger1 =! Time
+name = "Swing - FXSUB"
+ID = 02
+stateno = 14205
+pos = 0,-0
+postype = p1
+facing = 1
+ownpal = 1
+
+[State 200, End]
+type = Destroyself
+trigger1 = !AnimTime
+;---------------------------------------------------------------------------
+;Hitted
+[Statedef 14220]
+type    = S
+physics = S
+movetype = H
+sprpriority = -1
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, PalFX]
+type = PalFX
+trigger1 = time = 0
+time = 15
+add = 100,0,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14220
+time = 9999
+
+[State 0, ParentVaradd]
+type = ParentVaradd
+trigger1 = time = 0
+v = 17
+value = -gethitvar(damage)
+
+[State 0, PosSet]
+type = PosSet
+trigger1 = time = 0
+y = 0
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+y = 0
+
+[State 0, VelSet]
+type = Veladd
+trigger1 = time = 0
+x = ifelse(facing = 1,gethitvar(xvel)/2,-gethitvar(xvel)/2)
+
+[State 130, 1]
+type = ChangeAnim
+trigger1 = 1
+value = 14220
+
+[State 130, Hit End]
+type = ChangeState
+trigger1 = parent,var(17) > 0 && Hitover
+value = 14000
+
+[State 130, Hit End]
+type = ChangeState
+trigger1 = parent,var(17) <= 0 && Hitover
+value = 14001
+;---------------------------------------------------------------------------
+;Hitted in Air
+[Statedef 14221]
+type    = A
+physics = A
+movetype = H
+sprpriority = -1
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = 1
+value = 1
+movecamera = 1,0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 =  1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+stateno = 14221
+time = 9999
+
+[State 0, ParentVaradd]
+type = ParentVaradd
+trigger1 = time = 0
+v = 17
+value = -gethitvar(damage)
+
+[State 0, VelSet]
+type = Veladd
+trigger1 = time = 0
+x = ifelse(facing = 1,gethitvar(xvel)/2,-gethitvar(xvel)/2)
+
+[State 130, 1]
+type = ChangeAnim
+trigger1 = 1
+value = 14225
+
+[State 130, Hit End]
+type = ChangeState
+trigger1 = parent,var(17) > 0 && Hitover
+value = 14000
+
+[State 130, Hit End]
+type = ChangeState
+trigger1 = parent,var(17) <= 0 && Hitover
+value = 14001
+
+[State 130, Hit End]
+type = ChangeState
+trigger1 = parent,var(17) > 0 && Hitover
+value = 14040
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = pos y >= -10
+value = 14220

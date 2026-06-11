@@ -1,0 +1,584 @@
+
+;-------------------------------------------------------------------------------
+; Himawari Kyubi Mode - Standalone CNS
+; Drop this file into your character folder and add to .def:
+;   [Files]
+;   cns = himawari.cns
+;   cns = himawari_kyubi.cns
+;
+; This file assumes you'll wire inputs in the CMD.
+; Kyubi mode flag: var(20) == 1
+;-------------------------------------------------------------------------------
+
+;===============================================================================
+; GLOBAL / ALWAYS-ON CONTROLLERS
+;===============================================================================
+
+[Statedef -3]
+; Reset Kyubi flag on round start
+[State -3, ResetKyubiOnIntro]
+type = VarSet
+trigger1 = RoundState = 0
+v = 20
+value = 0
+
+; Optional: Keep Kyubi after round if you want (commented by default)
+;[State -3, PersistKyubi]
+;type = VarSet
+;trigger1 = 0
+;v = 20
+;value = Var(20)
+
+;===============================================================================
+; TRANSFORMATION
+;===============================================================================
+
+; Play this state from CMD (e.g., D,DF,F+z). Sets var(20)=1.
+[Statedef 33334]
+type    = S
+movetype= I
+physics = N
+velset  = 0,0
+ctrl    = 0
+anim    = 33334
+sprpriority = 4
+
+; --- Optional SFX/FX hooks (uncomment and adjust as needed) ---
+;[State 33334, Snd]
+;type = PlaySnd
+;trigger1 = AnimElem = 1
+;value = 0,0
+
+;[State 33334, FX Helper Start]
+;type = Helper
+;trigger1 = AnimElem = 2
+;name = "Kyubi Aura Start"
+;stateno = 10970
+;id = 10970
+;ownpal = 1
+;postype = p1
+;pos = 0,0
+;keyctrl = 0
+;pausemovetime = 9999
+;supermovetime = 9999
+
+; When anim finishes, set Kyubi flag and return control
+[State 33334, BecomeKyubi]
+type = VarSet
+trigger1 = AnimTime = 0
+v = 20
+value = 1
+
+[State 33334, EndFX]
+type = Helper
+trigger1 = AnimTime = 0
+name = "Kyubi Aura Fin"
+stateno = 10975
+id = 10975
+ownpal = 1
+postype = p1
+pos = 0,0
+keyctrl = 0
+pausemovetime = 30
+supermovetime = 30
+
+; Go to idle (you can redirect to your own idle statenumber if different)
+[State 33334, ToIdle]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 19000
+ctrl = 1
+
+;===============================================================================
+; OPTIONAL KYUBI VISUAL OVERRIDES (ANIMATION-ONLY)
+; Wire these only if you want her stand/walk/run/jump to visually swap after var(20)=1
+; Commented by default to avoid conflicts with base character states.
+;===============================================================================
+
+[Statedef -2]
+; -- Example: Force Kyubi idle anim while in stand state 0 (if your char uses 0)
+;[State -2, KyubiStandIdle]
+;type = ChangeAnim
+;triggerall = Var(20) = 1
+;triggerall = StateNo = 0
+;trigger1 = Anim != 19000
+;value = 19000
+
+; -- Example: Walk forward (commonly state 20)
+;[State -2, KyubiWalkFwd]
+;type = ChangeAnim
+;triggerall = Var(20) = 1
+;triggerall = StateNo = 20
+;trigger1 = Anim != 19020
+;value = 19020
+
+; -- Example: Walk back (commonly state 21)
+;[State -2, KyubiWalkBack]
+;type = ChangeAnim
+;triggerall = Var(20) = 1
+;triggerall = StateNo = 21
+;trigger1 = Anim != 19021
+;value = 19021
+
+;===============================================================================
+; IDLE VARIATIONS (Kyubi-only)
+;===============================================================================
+[Statedef 19000]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19000
+sprpriority = 3
+[State 19000, KyubiOnly]
+type = AssertSpecial
+trigger1 = Var(20) = 1
+flag = noshadow
+
+[Statedef 19005]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19005
+sprpriority = 3
+[State 19005, KyubiOnly]
+type = AssertSpecial
+trigger1 = Var(20) = 1
+flag = noshadow
+
+[Statedef 19012]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19012
+sprpriority = 3
+[State 19012, KyubiOnly]
+type = AssertSpecial
+trigger1 = Var(20) = 1
+flag = noshadow
+
+;===============================================================================
+; MOVEMENT (Kyubi-only visual/move states)
+;===============================================================================
+[Statedef 19020]
+type = A
+movetype = A
+physics = S
+velset = 1.5,0
+ctrl = 1
+anim = 19020
+[State 19020, KyubiOnly] ; optional visual marker
+type = AssertSpecial
+trigger1 = Var(20) = 1
+flag = noshadow
+
+[Statedef 19021]
+type = A
+movetype = A
+physics = S
+velset = -1.5,0
+ctrl = 1
+anim = 19021
+[State 19021, KyubiOnly]
+type = AssertSpecial
+trigger1 = Var(20) = 1
+flag = noshadow
+
+[Statedef 19041]
+type = A
+movetype = A
+physics = S
+velset = 2,0
+ctrl = 1
+anim = 19041
+
+[Statedef 19100]
+type = A
+movetype = A
+physics = S
+velset = 3,0
+ctrl = 1
+anim = 19100
+
+[Statedef 19105]
+type = A
+movetype = A
+physics = S
+velset = -3,0
+ctrl = 1
+anim = 19105
+
+;===============================================================================
+; CROUCH
+;===============================================================================
+[Statedef 19011]
+type = S
+movetype = C
+physics = S
+ctrl = 1
+anim = 19011
+
+[Statedef 33310]
+type = S
+movetype = C
+physics = S
+ctrl = 1
+anim = 33310
+
+[Statedef 19040]
+type = S
+movetype = C
+physics = S
+ctrl = 1
+anim = 19040
+
+;===============================================================================
+; JUMP
+;===============================================================================
+[Statedef 19043]
+type = A
+movetype = A
+physics = S
+velset = 0,-4
+ctrl = 1
+anim = 19043
+
+[Statedef 19044]
+type = A
+movetype = A
+physics = S
+velset = 0,-3
+ctrl = 1
+anim = 19044
+
+[Statedef 19047]
+type = A
+movetype = A
+physics = S
+velset = 0,0
+ctrl = 1
+anim = 19047
+
+[Statedef 19050]
+type = A
+movetype = A
+physics = S
+velset = 0,-2
+ctrl = 1
+anim = 19050
+
+;===============================================================================
+; GUARD / HIT REACTIONS
+;===============================================================================
+[Statedef 19120]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19120
+
+[Statedef 19121]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19121
+
+[Statedef 19122]
+type = A
+movetype = I
+physics = N
+ctrl = 1
+anim = 19122
+
+[Statedef 19130]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19130
+
+[Statedef 19131]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19131
+
+[Statedef 19132]
+type = A
+movetype = I
+physics = N
+ctrl = 1
+anim = 19132
+
+[Statedef 19140]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19140
+
+[Statedef 19141]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19141
+
+[Statedef 19142]
+type = A
+movetype = I
+physics = N
+ctrl = 1
+anim = 19142
+
+[Statedef 19150]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19150
+
+[Statedef 19151]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19151
+
+[Statedef 19152]
+type = A
+movetype = I
+physics = N
+ctrl = 1
+anim = 19152
+
+;===============================================================================
+; LOSE / WIN
+;===============================================================================
+[Statedef 19170]
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 19170
+
+[Statedef 19180]
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 19180
+
+;===============================================================================
+; NORMAL ATTACKS (Kyubi-only)
+; Add proper HitDef/VelAdd as needed.
+;===============================================================================
+[Statedef 19200]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19200
+[State 19200, KyubiOnly]
+type = AssertSpecial
+trigger1 = Var(20) = 1
+flag = noairguard
+;[State 19200, HitDef] ; <-- add your hitdefs
+;type = HitDef
+
+[Statedef 19210]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19210
+
+[Statedef 19220]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19220
+
+[Statedef 19230]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19230
+
+[Statedef 19235]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19235
+
+[Statedef 19300]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19300
+
+[Statedef 19310]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19310
+
+[Statedef 19320]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 19320
+
+;===============================================================================
+; CHARGING
+;===============================================================================
+[Statedef 19500]
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 19500
+;[State 19500, PowerAdd]
+;type = PowerAdd
+;trigger1 = 1
+;value = 4
+
+[Statedef 19501]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 19501
+
+;===============================================================================
+; AIR ATTACKS
+;===============================================================================
+[Statedef 19600]
+type = A
+movetype = A
+physics = A
+ctrl = 0
+anim = 19600
+
+[Statedef 19610]
+type = A
+movetype = A
+physics = A
+ctrl = 0
+anim = 19610
+
+;===============================================================================
+; SPEED / HAND ATTACKS
+;===============================================================================
+[Statedef 35100]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35100
+
+[Statedef 35101]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 35101
+
+[Statedef 35200]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35200
+
+[Statedef 35300]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35300
+
+[Statedef 35301]
+type = S
+movetype = I
+physics = N
+ctrl = 1
+anim = 35301
+
+;===============================================================================
+; BIJUU / OMEGA ATTACKS
+;===============================================================================
+[Statedef 35400]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35400
+
+[Statedef 35450]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35450
+
+[Statedef 35455]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35455
+
+[Statedef 35500]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 35500
+
+[Statedef 35550] ; HELPER launcher/manager (you can spawn this via other states)
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 35550
+
+;===============================================================================
+; TAIL BEAST BOMB (you can treat as ultimate too)
+;===============================================================================
+[Statedef 33335]
+type = A
+movetype = A
+physics = S
+ctrl = 0
+anim = 33335
+sprpriority = 5
+;[State 33335, Projectile] ; Example placeholder
+;type = Projectile
+
+;===============================================================================
+; CANON FX (start/finish helpers for transformation or big moves)
+;===============================================================================
+[Statedef 10970]
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 10970
+
+[Statedef 10975]
+type = S
+movetype = I
+physics = N
+ctrl = 0
+anim = 10975

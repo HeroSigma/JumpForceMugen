@@ -1,0 +1,1766 @@
+;===============================================================================
+; Kazan Bakuhatsu
+;===============================================================================
+; Kazan Bakuhatsu  - Stand
+[Statedef 3300]
+type = S
+physics = N
+velset = 0,0
+ctrl = 0
+anim = 3300
+poweradd = -3000
+
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  7073
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  7074
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  70733
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  70743
+
+
+[State 3000, SuperPause]
+type = SuperPause
+trigger1 = time = 0
+time = 30
+movetime = 30
+anim = -1
+sound = -1
+pos = 0,0
+darken = 0
+unhittable = 1
+
+
+[State 3000, VarSet]
+type = Varset
+trigger1 = time = 0
+v = 12
+value = -100
+
+[State 3000, BGColorFX]
+type = BGPalFX
+trigger1 = 1
+time = -1
+add = Var(12),Var(12),Var(12)
+
+[State 3000, Cámara lenta]
+type = Pause
+trigger1 = time = [20, 40]
+time = 1
+movetime = 0
+
+[State 3000, VarAdd]
+type = VarAdd
+triggerall =  Var(12) < 0
+trigger1 = time = [60, 80]
+v = 12
+value = 10
+
+[State 3000:	EnvShake]
+type			= EnvShake
+trigger1 		= (AnimElem = 1)
+time			= 20
+freq			= 120
+ampl			= -2
+phase			= 50
+
+
+[State 3000, Super Charge]
+type = Explod
+trigger1 = Time = 0
+anim = 7400
+ID = 7400
+pos = 15,-30
+facing = (facing)
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = -1
+ownpal = 1
+scale = .35,.35
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+[State 3000, Super Charge - Banda]
+type = Explod
+trigger1 = Time = 25
+anim = 7401
+ID = 7401
+pos = 15,-30
+facing = (facing)
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = -1
+ownpal = 1
+scale = .25,.25
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 3000, PlaySnd - Super Charge]
+type = PlaySnd
+trigger1 = Time = 0
+value = S3,1
+volume = 50
+channel = 1
+
+
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 30
+value = S4,18
+
+
+
+
+[State 0, StateTypeSet]
+type = StateTypeSet
+trigger1 = time = 69
+statetype = A
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = time > 69
+value = 0
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 69
+x = -6
+y = -6
+
+[State 0, Velmul]
+type = Velmul
+trigger1 =  time > 69
+y = 0.95
+
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = time = 0
+value = SCA,NA,NP,NT
+time = 90
+[State 0, HitBy]
+type = HitBy
+trigger1 = time = 0
+value = SCA,SA,HA,SP,HP,ST,HT
+time = 90
+
+
+[State 3001, End]
+type = ChangeState
+triggerall = backedgebodydist < 20
+trigger1 = animtime = 0
+value	= 3301
+ctrl = 0
+
+
+
+;----------------------------------------------------------------
+; Kazan Bakuhatsu -  Lazamiento
+[Statedef 3301]
+movetype= A
+juggle  = 4
+ctrl = 0
+anim = 3301
+sprpriority = 1
+
+[State 200, 2]
+type = PlaySnd
+trigger1 = Time%20 = 0
+value = 2, 0+(Random%6)
+volume = 10
+
+
+[State 0, EnvShake]
+type = EnvShake
+trigger1 = Time = 0
+time = 100
+freq = 180
+ampl = -5
+phase = 90
+
+[State 200, 2]
+type = PlaySnd
+trigger1 = Time = 0
+value = 2, 8
+volume = 10
+
+
+[State 0, VelSet]
+type = VelSet
+trigger1 =  Time = 0
+x = 4
+y = 0
+
+[State 0, VelAdd]
+type = VelAdd
+trigger1 =  time = [0,20]
+y = 0.2
+[State 0, VelAdd]
+type = VelAdd
+trigger1 =  time = [20,60]
+y = -0.15
+[State 0, VelAdd]
+type = VelAdd
+trigger1 =  time = [60,110]
+y = 0.25
+[State 0, Velmul]
+type = Velmul
+trigger1 =  time = [60,110]
+y = 0.9
+
+
+[State 60, Explod atras]
+type = Explod
+triggerall = time < 100
+trigger1 = time%6 = 0
+anim = 7060
+ID =  7060
+pos = 20-(random%50),-50-(random%80)
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.75, 0.75
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Explod Lava Ground]
+type = Explod
+triggerall = time < 100
+trigger1 = time%2 = 0
+anim = 7061
+ID =  7061
+pos = 50-(random%200),20-(random%20)
+vel = 1,0
+accel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.75, 1
+sprpriority = 1+(random%2)
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+[State 60, Explod Lava Avalanche N]
+type = Explod
+triggerall = time < 100
+trigger1 = time%4 = 0
+anim = 7086
+ID =  7086
+pos = 25-(random%100),0-(random%80)
+vel = 0,0
+accel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 1, 1
+sprpriority = -1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Explod Lava Avalanche P]
+type = Explod
+triggerall = time < 100
+trigger1 = time%4 = 0
+anim = 7085
+ID =  7085
+pos = 25-(random%100),0-(random%80)
+vel = 0,0
+accel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 1, 1
+sprpriority = 1+(random%2)
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+
+[State 200, Lava Rocks]
+type = Explod
+triggerall = time < 100
+trigger1 = time%6 = 0
+anim = 70663+(random%2)
+ID = 70663
+postype = P1
+pos = 60-(random%80),-50-(random%80)
+facing = 1
+vel = 3,-3
+accel = 0,0.3
+sprpriority = 3
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.75,0.75
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+
+[State 210, 1]
+type = HitDef
+trigger1 = animelem = 2
+attr = A, HA
+animtype  = Medium
+getpower = 0,0
+damage = 60,5
+guardflag = HA
+priority = 3
+pausetime = 10,10
+sparkno = -1;s6000
+guard.sparkno = s7000
+sparkxy = -15,-35
+hitsound   = S0,15
+guardsound = S0,8
+ground.type = High
+ground.slidetime = 25
+ground.hittime  = 25
+ground.velocity = -2.5,-6
+air.velocity = -2.5,-3.5
+fall = 1
+fall.recover = 0
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = random < 222
+trigger1 = numhelper(1180) = 0 && movecontact = 1
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = Movehit = 1
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 6
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+
+
+[State 200, End]
+type = ChangeState
+trigger1 = Time = 120
+value = 3309
+ctrl = 0
+
+
+;----------------------------------------------------------------
+; Kazan Bakuhatsu -  Finish
+[Statedef 3309]
+type    = S
+physics = N
+juggle  = 4
+ctrl = 0
+anim = 3309
+sprpriority = -1
+
+[State 200, 2]
+type = PlaySnd
+trigger1 = Time = 0
+value = 2, 6
+volume = 10
+
+
+[State 0, PosSet]
+type = PosSet
+trigger1 = 1
+y = 0
+
+[State 0, PosAdd]
+type = PosAdd
+trigger1 = Time = 0
+x = -100
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = Time = 0
+x = 5
+
+[State 0, VelMul]
+type = VelMul
+trigger1 = 1
+x = 0.9
+
+
+
+[State 3090: Auxiliar de cámara lenta]
+type		= Helper
+triggerall      = numhelper(3390) = 0
+trigger1        = time = 0
+helpertype	= Normal
+name		= "Auxiliar de cámara lenta"
+id		= 3390
+pos		= 0,-300
+postype		= p1
+facing		= 1
+stateno		= 3390
+keyctrl		= 0
+ownpal		= 1
+supermovetime	= 0
+pausemovetime	= 0
+size.xscale     = 1
+size.yscale     = 1
+
+[State 3090: Inhibidor de recuperación]
+type		= Helper
+triggerall = Numhelper(3095) = 0
+trigger1 = time = 0
+helpertype	= Normal
+name		= "Inhibidor de recuperación"
+id		= 3095
+pos		= 0,0
+postype		= p1
+facing		= 1
+stateno		= 3095
+keyctrl		= 0
+ownpal		= 1
+supermovetime	= 0
+pausemovetime	= 0
+size.xscale     = 1
+size.yscale     = 1
+
+
+
+[State 60, Explod Lava Ground]
+type = Explod
+triggerall = time =[0,10]
+trigger1 = time%2 = 0
+anim = 70612
+ID =  70612
+pos = 25-(random%10),8-(random%16)
+vel = 0.84,0
+accel = -0.02,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.4, 0.4
+sprpriority = 1+(random%2)
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 0
+ctrl = 1
+
+
+
+
+
+;-------------------------------------------------------------------------
+;===============================================================================
+; Ryusei Kazan - Start
+[Statedef 3100]
+type = S
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 3100
+poweradd = -3000
+
+;---------------------
+[State 0, SUPER - Speedline]
+type = Helper
+TriggerAll = NumHelper(7777)=0
+trigger1 = Time = 0
+helpertype = normal
+name = "Speedline"
+ID = 7777
+stateno = 7777
+pos = 0,0
+postype = Back
+facing = 1
+keyctrl = 0
+ownpal = 1
+ignorehitpause = 1
+supermovetime = 99999
+pausemovetime = 99999
+
+[State 0, SUPER - Dark Screen]
+type = Helper
+trigger1 = time = 0
+helpertype = normal
+name = "Dark Screen"
+ID = 7778
+stateno = 7778
+pos = 9999,9999
+postype = p1
+Supermovetime = 99999
+Pausemovetime = 99999
+
+;---------------------
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  7073
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  7074
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  70733
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = time = 0
+id =  70743
+
+
+[State 3000, SuperPause]
+type = SuperPause
+trigger1 = time = 0
+time = 30
+movetime = 30
+anim = -1
+sound = -1
+pos = 0,0
+darken = 0
+unhittable = 1
+
+
+[State 3000, Cámara lenta]
+type = Pause
+trigger1 = time = [50, 70]
+time = 1
+movetime = 0
+
+
+[State 3000:	EnvShake]
+type			= EnvShake
+trigger1 		= (AnimElem = 3, > 0)
+time			= 20
+freq			= 120
+ampl			= -2
+phase			= 50
+
+
+[State 3000, Super Charge]
+type = Explod
+trigger1 = Time = 0
+anim = 7400
+ID = 7400
+pos = 0,-30
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .35,.35
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 3000, PlaySnd - Super Charge]
+type = PlaySnd
+trigger1 = Time = 0
+value = S3,0
+volume = 50
+channel = 6
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 50
+value = S4,15
+
+[State 0, PlaySnd]
+type = PlaySnd
+triggerall = time >= 50
+trigger1 = time%4 = 0
+value = S2,2
+
+
+[State 3250: Ryusei Kazan - Summoner]
+type		= Helper
+trigger1        = time = 70
+helpertype	= Normal
+name		= "Ryusei Kazan - Summoner"
+id		= 3150
+pos		= 0,0
+postype		= p2
+facing		= -1
+stateno		= 3150
+keyctrl		= 0
+ownpal		= 1
+supermovetime 	= 999
+ignorehitpause  = 1
+size.xscale     = 1
+size.yscale     = 1
+
+
+[State 60, Explod Meteo Up]
+type = Explod
+trigger1 = animelem = 5
+trigger2 = animelem = 9
+trigger3 = animelem = 13
+anim = 70531
+ID = 70531
+pos = -8,-35
+vel = 0,-4
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.2, 0.2
+sprpriority = 4
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+[State 60, Explod Meteo Up]
+type = Explod
+trigger1 = animelem = 7
+trigger2 = animelem = 11
+trigger3 = animelem = 15
+anim = 70531
+ID = 70531
+pos = 10,-35
+vel = 0,-4
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.2, 0.2
+sprpriority = 4
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+[State 60, Explod atras]
+type = Explod
+triggerall = time = [45,88]
+trigger1 = time%5 = 0
+anim = 7060
+ID =  7060
+pos = 10,-60-(random%30)
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = -1
+vfacing = -1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.35, 0.35
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+[State 60, Explod atras]
+type = Explod
+triggerall = time = [45,88]
+trigger1 = time%5 = 0
+anim = 7060
+ID =  7060
+pos = -8,-60-(random%30)
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = -1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.35, 0.35
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = time = 0
+value = SCA,NA,NP,NT
+time = 80
+[State 0, HitBy]
+type = HitBy
+trigger1 = time = 0
+value = SCA,SA,HA,SP,HP,ST,HT
+time = 80
+
+
+[State 3001, End]
+type = ChangeState
+trigger1 = animtime = 0
+value	= 0
+ctrl = 1
+
+
+
+;-------------------------------------------------------------------------
+; Ryusei Kazan - Summoner
+[Statedef 3150]
+type    = A
+movetype = A
+physics = N
+velset = 0,0
+anim = 3150
+ctrl = 0
+sprpriority = 3
+
+
+
+[State 3250: Ryusei Kazan - Projetiles]
+type		= Helper
+trigger1        = time%10 = 0
+helpertype	= Normal
+name		= "Ryusei Kazan - Projetile"
+id		= 3151
+pos		= -100+(random%200),-250
+postype		= p1
+facing		= 1
+stateno		= 3151+(random%4)
+keyctrl		= 0
+ownpal		= 1
+supermovetime 	= 999
+ignorehitpause  = 1
+size.xscale     = 0.5
+size.yscale     = 0.5
+
+
+[State 3290, DestroySelf]
+type = DestroySelf
+trigger1 = time = 150
+
+;-------------------------------------------------------------------------------
+; Ryusei Kazan -  Projetile  1
+[Statedef 3151]
+movetype = A
+physics = N
+anim = 3151
+sprpriority = 2
+Juggle = 0
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+ignorehitpause = 1
+
+[State 0, Trans]
+type = Trans
+trigger1 = 1
+trans = add
+ignorehitpause = 1
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 1+(random%2)
+y = 15
+
+[State 60, RyuseiKazam Negative]
+type = Explod
+trigger1 = time = 0
+anim = 70691
+ID =  70691
+pos = 0,0
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+supermove = 1
+pausemove =1
+scale = 0.5, 0.5
+sprpriority = -1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Humo Lava]
+type = Explod
+trigger1 = time%2 = 0
+anim = 7064
+ID =  7064
+pos = -10+(random&20),10-(random&40)
+vel = 0,-0.3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = -1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.4, 0.4
+sprpriority = 3
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = (random%20) = 1
+trigger1 = numhelper(1180) = 0 && movecontact
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+[State 210, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = Animelem = 1
+getpower = 0,0
+damage    = 68,5
+pausetime = 10,12
+attr = A, HP
+hitflag	= MAFDP
+guardflag = MA
+animtype = Hard
+priority = 7, Hit
+sparkno = -1;s6000
+guard.sparkno = s7000
+sparkxy = -20,-25
+hitsound   = S0,15
+guardsound = S0,8
+ground.type = High
+ground.slidetime = 25
+ground.hittime  = 25
+ground.velocity = -1,-5
+air.velocity = -1,-5
+fall = 1
+fall.recover = 0
+envshake.time = 10
+envshake.freq = 120
+envshake.ampl = -4
+envshake.phase = 90
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = movecontact
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = (random%20) = 1
+trigger1 = numhelper(1180) = 0 && movecontact
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = pos y > -10
+value = 3159
+ctrl = 0
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = movecontact = 1
+value = 3158
+ctrl = 0
+
+
+
+
+;-------------------------------------------------------------------------------
+; Ryusei Kazan -  Projetile  2
+[Statedef 3152]
+movetype = A
+physics = N
+anim = 3152
+sprpriority = 2
+Juggle = 0
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+ignorehitpause = 1
+
+[State 0, Trans]
+type = Trans
+trigger1 = 1
+trans = add
+ignorehitpause = 1
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 1+(random%2)
+y = 15
+
+[State 60, RyuseiKazam Negative]
+type = Explod
+trigger1 = time = 0
+anim = 70692
+ID =  70692
+pos = 0,0
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+supermove = 1
+pausemove =1
+scale = 0.5, 0.5
+sprpriority = -1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Humo Lava]
+type = Explod
+trigger1 = time%2 = 0
+anim = 7064
+ID =  7064
+pos = -10+(random&20),10-(random&40)
+vel = 0,-0.3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = -1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.4, 0.4
+sprpriority = 3
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+
+[State 210, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = Animelem = 1
+getpower = 0,0
+damage    = 68,5
+pausetime = 10,12
+attr = A, HP
+hitflag	= MAFDP
+guardflag = MA
+animtype = Hard
+priority = 7, Hit
+sparkno = -1;s6000
+guard.sparkno = s7000
+sparkxy = -20,-25
+hitsound   = S0,15
+guardsound = S0,8
+ground.type = High
+ground.slidetime = 25
+ground.hittime  = 25
+ground.velocity = -1,-5
+air.velocity = -1,-5
+fall = 1
+fall.recover = 0
+envshake.time = 10
+envshake.freq = 120
+envshake.ampl = -4
+envshake.phase = 90
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = movecontact
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = (random%20) = 1
+trigger1 = numhelper(1180) = 0 && movecontact
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = pos y > -10
+value = 3159
+ctrl = 0
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = movecontact = 1
+value = 3158
+ctrl = 0
+
+
+;-------------------------------------------------------------------------------
+; Ryusei Kazan -  Projetile  3
+[Statedef 3153]
+movetype = A
+physics = N
+anim = 3153
+sprpriority = 2
+Juggle = 0
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+ignorehitpause = 1
+
+[State 0, Trans]
+type = Trans
+trigger1 = 1
+trans = add
+ignorehitpause = 1
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 1+(random%2)
+y = 15
+
+[State 60, RyuseiKazam Negative]
+type = Explod
+trigger1 = time = 0
+anim = 70693
+ID =  70693
+pos = 0,0
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+supermove = 1
+pausemove =1
+scale = 0.5, 0.5
+sprpriority = -1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Humo Lava]
+type = Explod
+trigger1 = time%2 = 0
+anim = 7064
+ID =  7064
+pos = -10+(random&20),10-(random&40)
+vel = 0,-0.3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = -1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.4, 0.4
+sprpriority = 3
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+
+
+[State 210, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = Animelem = 1
+getpower = 0,0
+damage    = 68,5
+pausetime = 10,12
+attr = A, HP
+hitflag	= MAFDP
+guardflag = MA
+animtype = Hard
+priority = 7, Hit
+sparkno = -1;s6000
+guard.sparkno = s7000
+sparkxy = -20,-25
+hitsound   = S0,15
+guardsound = S0,8
+ground.type = High
+ground.slidetime = 25
+ground.hittime  = 25
+ground.velocity = -1,-5
+air.velocity = -1,-5
+fall = 1
+fall.recover = 0
+envshake.time = 10
+envshake.freq = 120
+envshake.ampl = -4
+envshake.phase = 90
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = movecontact
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = (random%20) = 1
+trigger1 = numhelper(1180) = 0 && movecontact
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = pos y > -10
+value = 3159
+ctrl = 0
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = movecontact = 1
+value = 3158
+ctrl = 0
+
+
+
+;-------------------------------------------------------------------------------
+; Ryusei Kazan -  Projetile 4
+[Statedef 3154]
+movetype = A
+physics = N
+anim = 3154
+sprpriority = 2
+Juggle = 0
+
+[State 0, AssertSpecial]
+type = AssertSpecial
+trigger1 = 1
+flag = noshadow
+ignorehitpause = 1
+
+[State 0, Trans]
+type = Trans
+trigger1 = 1
+trans = add
+ignorehitpause = 1
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 1+(random%2)
+y = 15
+
+[State 60, RyuseiKazam Negative]
+type = Explod
+trigger1 = time = 0
+anim = 70694
+ID =  70694
+pos = 0,0
+vel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+supermove = 1
+pausemove =1
+scale = 0.5, 0.5
+sprpriority = -1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Humo Lava]
+type = Explod
+trigger1 = time%2 = 0
+anim = 7064
+ID =  7064
+pos = -10+(random&20),10-(random&40)
+vel = 0,-0.3
+postype = p1
+facing = 1
+vfacing = -1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.4, 0.4
+sprpriority = 3
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 210, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = Animelem = 1
+getpower = 0,0
+damage    = 68,5
+pausetime = 10,12
+attr = A, HP
+hitflag	= MAFDP
+guardflag = MA
+animtype = Hard
+priority = 7, Hit
+sparkno = -1;s6000
+guard.sparkno = s7000
+sparkxy = -20,-25
+hitsound   = S0,15
+guardsound = S0,8
+ground.type = High
+ground.slidetime = 25
+ground.hittime  = 25
+ground.velocity = -1,-5
+air.velocity = -1,-5
+fall = 1
+fall.recover = 0
+envshake.time = 10
+envshake.freq = 120
+envshake.ampl = -4
+envshake.phase = 90
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = movecontact
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = (random%20) = 1
+trigger1 = numhelper(1180) = 0 && movecontact
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = pos y > -10
+value = 3159
+ctrl = 0
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = movecontact = 1
+value = 3158
+ctrl = 0
+
+;-------------------------------------------------------------------------------
+; Ryusei Kazan -  Projetile Finsh Hit
+[Statedef 3158]
+Movetype = A
+ctrl = 0
+anim = 3150
+sprpriority = 3
+velset = 0,0
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70691
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70692
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70693
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70694
+
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = Movehit = 1
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 6
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+
+
+
+
+[State 0, destroyself]
+type = destroyself
+trigger1 = animtime = 0
+
+;-----------------------------------------------------
+; Ryusei Kazan -  Projetile Finsh Ground
+[Statedef 3159]
+Movetype = A
+ctrl = 0
+anim = 3159
+sprpriority = 3
+velset = 0,0
+
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70691
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70692
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70693
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 =  Time = 0
+id =  70694
+
+[State 210, 2]
+type = PlaySnd
+trigger1 = Time = 0
+value = 3, 13
+volume = 10
+
+
+[State 0, EnvShake]
+type = EnvShake
+trigger1 = Time = 0
+time = 15
+freq = 220
+ampl = -8
+phase = 90
+
+
+[State 60, Explod Laba Ground]
+type = Explod
+triggerall = time = [0,10]
+trigger1 = time%3 = 0
+anim = 70612
+ID =  70612
+pos = 0+(random%20),10-(random%20)
+vel = 0.42,0
+accel = -0.01,0
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.2, 0.2
+sprpriority = 3+(random%3)
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Explod Laba Ground -1]
+type = Explod
+triggerall = time = [0,10]
+trigger1 = time%1 = 0
+anim = 70612
+ID =  70612
+pos = 0-(random%20),10-(random%20)
+vel = -0.42,0
+accel = 0.01,0
+postype = p1  ;p2,front,back,left,right
+facing = -1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.2, 0.2
+sprpriority = 3+(random%3)
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Meteorite Ground]
+type = Explod
+trigger1 = time = 0
+anim = 7056
+ID =  7056
+pos = 0,0
+vel = 0,0
+accel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = -1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.25, 0.25
+sprpriority = -1
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 60, Meteorite Ground]
+type = Explod
+trigger1 = time = 0
+anim = 7057
+ID =  7057
+pos = 0,0
+vel = 0,0
+accel = 0,0
+postype = p1  ;p2,front,back,left,right
+facing = -1
+vfacing = 1
+bindtime = 1
+removetime = -2
+supermove = 1
+pausemove =1
+scale = 0.25, 0.25
+sprpriority = 2
+ontop = 0
+shadow = 0,0,0
+ownpal = 1
+removeongethit = 0
+ignorehitpause = 1
+
+[State 210, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = animelem = 1
+getpower = 0,0
+damage    = 53,5
+pausetime = 10,12
+attr = S, HP
+hitflag	= MAFDP
+guardflag = MA
+animtype = Hard
+priority = 7, Hit
+sparkno = -1;s6000
+guard.sparkno = s7000
+sparkxy = -20,-25
+hitsound   = S0,15
+guardsound = S0,8
+ground.type = High
+ground.slidetime = 25
+ground.hittime  = 25
+ground.velocity = -1.5,-6
+air.velocity = -1.5,-6
+fall = 1
+fall.recover = 0
+envshake.time = 10
+envshake.freq = 120
+envshake.ampl = -4
+envshake.phase = 90
+
+[State 0, Veneno P2]
+type = Helper
+triggerall = life <= 700
+triggerall = (random%20) = 1
+trigger1 = numhelper(1180) = 0 && movecontact
+helpertype = normal
+ID = 1180
+stateno = 1180
+pos = 0,0
+postype = p1
+ownpal = 1
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(6381) = 0
+trigger1 = movecontact
+anim = 6381
+ID = 6381
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = 0.35,0.35
+removeongethit = 1
+ontop = 0
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 0, DestroySelf]
+type = DestroySelf
+trigger1 = animtime = 0
+;-----------------------------------------------------------------------
+; SUPER - Speedline
+[Statedef 7777]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+ctrl = 0
+anim = 9999
+sprpriority = -1
+
+[State 0, Speedline1]
+type = Explod
+trigger1 = time = 0
+anim = 7777
+ID = 7777
+pos = 160,100
+postype = back
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -1
+scale = .8,.8
+sprpriority = -1
+ontop = 1
+ownpal = 1
+removeongethit = 1
+trans = add
+supermovetime = 999
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+trigger1 = root,stateno != [3100,3158]
+id = 7777
+
+[State 200, End]
+type = Destroyself
+trigger1 = root,stateno != [3100,3158]
+;-------------------------------------------------------------------------------
+; SUPER - Dark Screen
+[Statedef 7778]
+type    = A
+movetype= I
+physics = N
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 9999
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 0
+v = 5
+value = -100
+
+[State 0, BGPalFX]
+type = BGPalFX
+trigger1 = 1
+time = 1
+add = var(5),var(5),var(5)
+
+[State 200, End]
+type = ChangeState
+trigger1 = root,stateno != [3100,3158]
+value = 7779
+;-------------------------------------------------------------------------------
+; SUPER - Dark Screen End
+[Statedef 7779]
+type    = A
+movetype= I
+physics = N
+juggle  = 1
+velset = 0,0
+ctrl = 0
+
+[State 0, VarAdd]
+type = VarAdd
+trigger1 = 1
+v = 5
+value = 10
+
+[State 0, BGPalFX]
+type = BGPalFX
+trigger1 = 1
+time = 1
+add = var(5),var(5),var(5)
+
+[State 200, End]
+type = Destroyself
+trigger1 = time = 3

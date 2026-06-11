@@ -1,0 +1,359 @@
+[Statedef -1]
+
+;Moviments
+
+[State -1, Dash Forward]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != C) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command = "ff")
+Trigger2 		= (AiLevel)&& Cond((Power >= (PowerMax / 2)), (Random < (AiLevel * 100) * 10), (Random < (AiLevel * 100) / 15)) && (FrontEdgeBodyDist > 50 && (P2BodyDist X >= 50 && (P2BodyDist Y = [-30,30])) && !NumHelper(117) && Enemy, MoveType != A)
+Value 		= 60
+[State  -1, Dash Backward]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != C) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command = "bb")
+Trigger2 		= (AiLevel) && Random < (AiLevel * 100) * 5 && (BackEdgeBodyDist > 50 && (EnemyNear, P2BodyDist X = [-5, 50]) && (P2BodyDist Y = [-20,20]) && !NumHelper(117) && (EnemyNear, MoveType = A))
+Value 		= Ifelse((Pos Y != 0), 75, 70)
+[State  -1, IA Guard]
+Type		= ChangeState
+Triggerall		= Ctrl && (AiLevel) && (RoundState = 2)
+Trigger1		= InGuardDist && Random < (AiLevel * 100) || (P2BodyDist X < 50 && (EnemyNear, MoveType = A)) || (Enemy,NumProj > 0)
+Value		= Cond(StateType = A, 132, Cond(StateType = C, 131, Cond(StateType = S, 130, 130)))
+[State  -1, Super Jump]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command = "s_jump")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) / 3) && (P2BodyDist X != [-15,15]) && P2BodyDist Y < -75 && P2MoveType != A
+Value 		= 80
+[State  -1, Walk]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = S) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command = "fwd") || (!AiLevel) && (Command = "back")
+Trigger2		= (AiLevel) && ((Random < (AiLevel * 100)) && (P2BodyDist X != [-10, 10]) && EnemyNear, MoveType != A)
+Value 		= 20
+
+;Basics_Atacks
+
+[State -1, A]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = S) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command != "spc1" && Command != "spc2" && Command != "holddown" && Command = "a")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 30 && ((EnemyNear, P2BodyDist X <= 10) && (P2BodyDist Y = [-5, 15])) && !Var(6))
+Value 		= 200
+[State -1, Down A]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command = "holddown" && Command = "a")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) && (P2BodyDist X <= 10 && (P2BodyDist Y = [-5, 15])) && !Var(6))
+Value 		= 230
+[State -1, Air A]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = A) && (RoundState = 2) && (Alive) && PrevStateNo != 250
+Trigger1 		= (!AiLevel) && (Command = "a")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 20 && ((P2BodyDist X = [-5,30]) && (P2BodyDist Y = [-10, 10])) && !Var(6))
+Value 		= 250
+[State -1, B]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = S) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command != "spc3" && Command != "spc4" && Command != "holddown" && Command = "b")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 30 && (P2BodyDist X <= 30 && (P2BodyDist Y = [-5, 15])) && !Var(6))
+Value 		= 300
+[State -1, Down B]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && (Alive)
+Trigger1 		= (!AiLevel) && (Command = "holddown" && Command = "b")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) / 10 && (P2BodyDist X <= 10 && (P2BodyDist Y = [-5, 20])) && !Var(6))
+Value 		= 330
+[State -1, Air B]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = A) && (RoundState = 2) && (Alive) && Pos Y <= -25
+Trigger1 		= (!AiLevel) &&  (Command = "b")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 30 && ((P2BodyDist X = [-10, 10]) && P2BodyDist Y > 5)   && Pos Y <= -50 && !Var(6))
+Value 		= 350
+[State -1, Pistol Kiss]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (RoundState = 2) && (Alive) && Power >= (PowerMax / 15)
+Trigger1 		= (!AiLevel) && (Command != "spc5" && Command != "spc6" && Command = "c")
+Trigger2		= (AiLevel) && (Random < (AiLevel * 100) / 30) && (((P2BodyDist X >= 10) && (P2BodyDist Y = [-5,5])) && (P2BodyDist X != [-10,10]) && !Var(6) && (PrevStateNo != [400, 408]))
+Trigger3		= (AiLevel) && (Random < (AiLevel * 100) / 40) && (P2BodyDist X = [0 + (P2Dist Y / 1),100 + (P2Dist Y / 1)]) && (P2BodyDist X != [-10,10]) && !Var(6) && (PrevStateNo != [400, 408])
+Trigger4 		= (AiLevel) && (Random < (AiLevel * 100) / 40) && (P2BodyDist Y <= -20 && (P2BodyDist X = [5 - (P2Dist Y / 5), 50 - (P2Dist Y)])) && (P2BodyDist X != [-10,10]) && !Var(6) && (PrevStateNo != [400, 408])
+Value 		= Ifelse((Pos Y < 0), 405, 400)
+[State -1, Power Charge]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = S) && (RoundState = 2) && (Alive) && (Power != PowerMax)
+Trigger1 		= (!AiLevel) && (Command = "s")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 5) && (P2BodyDist X >= 75 && P2MoveType != A)
+Value 		= 500
+
+;Skills
+
+[State -1, Hancock Pose]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = S) && (RoundState = 2) && Power >= (PowerMax / 6)
+Trigger1 		= (!AiLevel) && (Command = "spc1")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) && ((P2BodyDist X = [0,20]) && (P2BodyDist Y = [-15,15])) && !Var(6))
+Value 		= 1000
+[State -1, Charm]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && Power >= (PowerMax / 6)
+Trigger1 		= (!AiLevel) && (Command = "spc2")
+Trigger2 		= (AiLevel) && Cond((EnemyNear, MoveType = A), (Random < (AiLevel * 100) * 10), (Random < (AiLevel * 100) / 20)) && ((P2BodyDist X = [0, 65]) && (P2BodyDist Y = [-15,15])) && !Var(6) && (P2StateNo != 1207 && P2StateNo != 1560 && P2StateNo != 1565)
+Value 		= 1100
+[State -1, Up Pistol Kiss]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && Power >= (PowerMax / 3)
+Trigger1 		= (!AiLevel) && (Command = "spc3")
+Trigger2 		= (AiLevel) && ((Random < (AiLevel * 100) * 5) && ((P2BodyDist X = [-15, 15]) && (P2BodyDist Y <= -100)) && PrevStateNo != 1300)
+Value 		= 1200
+[State -1, Salome]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType = S) && (RoundState = 2) && Power >= (PowerMax / 4) && !NumHelper(1115)
+Trigger1 		= (!AiLevel) && (Command = "spc4")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) / 20) && ((P2BodyDist X = [0,30]) && (P2BodyDist Y = [-15,15])) && !Var(6)
+Value 		= 1300
+[State -1, Slave Arrow]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != C) && (RoundState = 2) && Power >= (PowerMax / 2) && (PrevStateNo != [1402, 1403])
+Trigger1 		= (!AiLevel) && (Command = "spc5")
+Trigger2 		= (AiLevel) && ((Random < (AiLevel * 100) * 15) && (P2BodyDist Y >= 0 && Cond(P2BodyDist X <= 250,(P2BodyDist X = [90 + (P2Dist Y / 1), 190 + (P2Dist Y)]), P2BodyDist Y >= 75)) && !Var(6) && (PrevStateNo != 220 && PrevStateNo != 320 && (PrevStateNo != [1400,1403])))
+Value 		= Ifelse((Pos Y < 0), Cond(P2StateNo = 1565, 1403, 1402), Cond(P2StateNo = 1565, 1401, 1400))
+[State -1, Mero Mero Mellow]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && Power >= (PowerMax / 3)
+Trigger1 		= (!AiLevel) && (Command = "spc6")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 10) && ((((P2BodyDist X = [0, 100]) && (P2BodyDist Y = [-15,15]) && (P2StateNo != 1560 && P2StateNo != 1565 && (PrevStateNo != 220 && PrevStateNo != 320 && PrevStateNo != 1500) && !Var(6)))))
+Value 		= 1500
+[State -1, Perfume Femur]
+Type 		= ChangeState
+Triggerall 		= Ctrl && (StateType != A) && (RoundState = 2) && Power = PowerMax && P2StateNo != 1565
+Trigger1 		= (!AiLevel) && (Command = "ult")
+Trigger2 		= (AiLevel) && (Random < (AiLevel * 100) * 25) && (P2BodyDist X = [-5,100]) && (P2BodyDist Y = [-15, 15]) && P2StateType != L && (PrevStateNo != 220 || PrevStateNo != 320) && (P2StateNo != [5080,5150])
+Value 		= 3000
+
+[Statedef -2]
+
+;[State Meditor de Alcançe]
+;Type 		= AllPalFX
+;Triggerall		= TeamSide = 1
+;Trigger1 		= ((Pos Y >= (Enemy, Pos Y - 50)) && Enemy, Pos Y < 0)
+;Time 		= 1
+;Color		= 0
+
+[State Stand Air - Fix]
+Type 		= ChangeState
+Triggerall 		= (StateNo = 0 || StateNo = 20)
+Trigger1 		= Pos y < 0
+Value 		= 50
+Ctrl 		= 1
+
+[State Pallete]
+Type 		= RemapPal
+Trigger1 		= 1
+Source 		= 1, 1
+Dest 		= 1, Var(55)
+IgnoreHitPause 	= 1
+
+[State StopAfterImage]
+Type 		= AfterImageTime
+Trigger1 		= StateNo != 70
+Trigger1 		= StateNo != 80
+Trigger1 		= StateNo != 350
+Trigger1 		= StateNo != 1350
+Trigger1 		= StateNo != [3000, 3002]
+Time 		= 1
+IgnoreHitPause 	= 1
+
+[State CtrlSet]
+Type 		= CtrlSet
+Trigger1 		= (!AiLevel) && (PrevStateNo = [401, 404]) && (Time >= 5)
+Trigger2 		= (AiLevel) && (PrevStateNo = [401, 404]) && (Time >= 0)
+Value 		= 1
+
+[State Power]
+Type 		= PowerAdd
+Trigger1 		= (StateNo != [170, 199]) && (StateNo != [200, 1500])
+Value 		= Cond((MoveType = H || StateType = L), 3, 1)
+
+[State NotHitBy]
+Type 		= NotHitBy
+Trigger1 		= StateNo = [60, 75]
+Trigger2 		= StateNo = 350 && Vel Y > 5
+Value 		= SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+
+[State RemoveExplod]
+Type 		= RemoveExplod
+Trigger1		= StateNo != 350
+Trigger2		= MoveType = H
+ID 		= 7017
+[State RemoveExplod]
+Type 		= RemoveExplod
+Trigger1		= StateNo != 500
+Trigger2		= MoveType = H
+ID 		= 530
+[State RemoveExplod]
+Type 		= RemoveExplod
+Trigger1		= StateType = L || MoveType = H || StateNo = 500 || (StateNo = [5000,5150])
+ID 		= 755
+[State 0, RemoveExplod]
+Type 		= RemoveExplod
+Trigger1		= StateNo != 901
+Trigger2		= MoveType = H
+ID 		= 905
+[State 0, RemoveExplod]
+Type 		= RemoveExplod
+Trigger1		= StateNo != 901
+Trigger2		= MoveType = H
+ID 		= 906
+[State Anti-Bug]
+type 		= PosSet
+Trigger1 		= Pos Y > 50
+Trigger2 		= (StateNo = [405,408]) && Pos Y > 0
+Trigger3 		= (PrevStateNo = [405,408]) && Pos Y > 0
+Y 		= 0
+
+[Statedef -3]
+
+; Var List
+
+[State 191, 4]
+Type 		= VarSet
+Trigger1 		= Var(55) = 9
+V 		= 3
+Value		= 1
+[State 191, 4]
+Type 		= VarSet
+Trigger1 		= Var(55) != 9
+V 		= 3
+Value		= 0
+
+; Air Jump Fix
+[State OFF]
+Type 		= VarSet
+Trigger1 		= Var(5) = 1 && Pos y >= 0
+V 		= 5
+Value 		= 0
+[State ON]
+Type 		= VarSet
+Trigger1 		= Var(5) = 0 && StateNo = 70
+V 		= 5
+Value 		= 1
+
+;Enemy Fall
+[State OFF]
+Type 		= VarSet
+Trigger1 		= Enemy, StateType = L
+Trigger2		= (Enemy, StateNo = [5050, 5150])
+Trigger3		= (Enemy, StateNo = [1105,1106])
+Trigger4		= Enemy, Anim = [5101, 5150]
+Trigger5		= Enemy, HitFall
+V 		= 6
+Value 		= 1
+[State ON]
+Type 		= VarSet
+Trigger1 		= Enemy, StateType != L
+Trigger2		= (Enemy, StateNo != [5050, 5150])
+Trigger3 		= (Enemy, StateNo != [1105,1106])
+Trigger3		= Enemy, Anim != [5101, 5150]
+Trigger4		= Enemy, HitFall = 0
+V 		= 6
+Value 		= 0
+
+; Luffy
+
+[State Luffy]
+Type 		= VarSet
+Trigger1		= Enemy, Name = "Luffy"
+Trigger2		= Enemy, Name = "Monkey D Luffy"
+Trigger3		= Enemy, Name = "Monkey D. Luffy"
+V 		= 8
+Value		= 1
+
+; Sounds
+
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1 		= StateNo != [191, 193]
+Channel 		= 1
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1 		= StateNo != [191, 193]
+Channel 		= 2
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1 		= StateNo != [191, 193]
+Channel 		= 3
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1 		= StateNo != 500
+Trigger2		= MoveType = H
+Channel 		= 4
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1 		= StateNo != 500
+Trigger2		= MoveType = H
+Channel 		= 5
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1 		= StateNo != 500
+Trigger2		= MoveType = H
+Channel 		= 6
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 9
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 10
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 11
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 12
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 13
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 14
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= MoveType = H
+Channel 		= 13
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= StateNo != 3002
+Channel 		= 15
+[State 0, StopSND]
+Type 		= StopSND
+Trigger1		= StateNo != 3002
+Channel 		= 16
+
+[State Walk]
+Type 		= PlaySnd
+Triggerall 		= StateNo = 20
+Trigger1		= (AnimElem = 4|| AnimElem = 8)
+Value 		= S20,1
+VolumeScale	= 50
+[State Jump]
+Type 		= PlaySnd
+Triggerall 		= StateNo = 40
+Trigger1 		= Time = 1
+Value 		= S40,1
+VolumeScale 	= 55
+Channel 		= -1
+[State Land]
+Type 		= PlaySnd
+Triggerall 		= StateNo = 52
+Trigger1 		= Time = 1
+Value 		= S52,1
+VolumeScale 	= 50
+[State Struck]
+Type 		= PlaySnd 
+Trigger1 		= MoveType = H && (StateNo != [0,155]) && !Time && !HitOver && (Random % 5) = 0
+Value 		= 5000, Ifelse(Random < 500, 1, Ifelse(Random < 500, 2, 3))

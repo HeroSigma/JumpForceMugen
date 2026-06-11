@@ -1,0 +1,1948 @@
+;===============================================================================
+;Fly Mode
+;===============================================================================
+;flying transform
+[Statedef 99910]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+anim = 99910
+velset = 0,-1
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 =time = 1
+value = S131,1
+volume = 999
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = animelem=2
+v = 10
+value = 2
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = power>10
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = time = 10
+value = 5550
+ctrl = 1
+;---------------------------------------------------------------------------
+;                              FLYING MODE
+;---------------------------------------------------------------------------
+; flying: stance
+[Statedef 5550]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+;anim = 5550
+velset = 0,0
+sprpriority = -1
+
+[State 1, Andando]
+type = PlaySnd
+trigger1 = timemod = 40,0
+value = S132,0
+volume = 50
+channel = 31
+
+[State 0, 1]
+type = ChangeAnim
+triggerall = var(2) = 1
+trigger1 = Anim != Cond(Facing = -1,5555,5550) && Anim != 5
+trigger2 = Anim = 5 && AnimTime = 0 ;Turn anim over
+value = Cond(Facing = -1,5555,5550)
+
+;[State 0, 0]
+;type = ChangeAnim
+;triggerall = facing = 1
+;trigger1 = Anim != 5550
+;value = 5550
+
+;[State 0, 0]
+;type = ChangeAnim
+;triggerall = facing != 1
+;trigger1 = Anim != 5555
+;value = 5555
+
+[State 0, PowerAdd]
+type = PowerAdd
+trigger1 = timemod = 5,0
+value = -10
+
+;limit for flying up
+[State 0, PosSet]
+type = PosSet
+trigger1 = pos y <= -150
+y = -150
+
+;fly stance float up
+[State 0, VelSet]
+type = VelSet
+trigger1 = gametime%30 = [0,14]
+x = 0
+y = -0.1
+
+[State 1118, Explod]
+type = Explod
+trigger1 = gametime%30 = [0,14]
+anim = 7014
+ID = 7014
+pos = -5,3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+vel = 0,0
+accel = 0,0
+random = 0,0
+removetime = -2
+pausemovetime = 0
+scale = .06,.06
+sprpriority = 3
+;ignorehitpause =
+persistent = 15
+
+[State 1118, Explod]
+type = Explod
+trigger1 = gametime%30 = [0,14]
+anim = 7014
+ID = 7014
+pos = 8,3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+vel = 0,0
+accel = 0,0
+random = 0,0
+removetime = -2
+pausemovetime = 0
+scale = .06,.06
+sprpriority = 3
+;ignorehitpause =
+persistent = 15
+
+
+;fly stance float down
+[State 0, VelSet]
+type = VelSet
+trigger1 = gametime%30 = [15,29]
+x = 0
+y = 0.1
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 0
+v = 15
+value = 2
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+;turn
+[State 0, Turn]
+type = Turn
+trigger1 = P2dist X < -10
+
+;fly forward
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = P2dist X < -10
+value = 5556
+ctrl = 1
+
+;fly forward
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [200,250]
+trigger2 = abs(p2bodydist x) > 50
+value = 101011
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+;fly backward
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdback"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [300,350]
+trigger2 = abs(p2bodydist x) < 50
+value = 101029
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+;fly up
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdup"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [400,425]
+trigger2 = p2bodydist y <= -25
+value = 101031
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+;fly down
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holddown"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [425,999]
+trigger2 = p2bodydist y >= 50
+value = 101041
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+; go back to semi-bird form when power is less than 1000
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = power < 10
+value = 50
+ctrl = 1
+
+;go back to jump/fall state
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = Win = 1
+;trigger2 = roundstate != 2
+value =50
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="a"
+value = 10011
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="b"
+value = 10015
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, Super Velocity]
+type = ChangeState
+;triggerall = var(40) <= 4
+triggerall = power >= 1000
+trigger1 = ailevel = 0 && command = "SPECIAL 1"
+trigger2 = ailevel > 0 && random < (ailevel * 100)/2
+trigger2 = p2bodydist x = [40,200]
+value = 12500
+
+[State 0, Speed Kick]
+type = ChangeState
+Triggerall = power >= 2000
+trigger1 = ailevel = 0 && command = "SPECIAL 3"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,150]
+trigger2 = random < (ailevel * 100)/2
+value = 12200
+
+[State 0, Spin Kick]
+type = ChangeState
+Triggerall = power >= 1500
+trigger1 = ailevel = 0 && command = "SPECIAL 5"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,200]
+trigger2 = random < (ailevel * 100)/2
+value = 12000
+
+
+;go back to  damage fall state
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = Life = 0
+value = 5050
+ctrl = 1
+
+;-------------------------------------------------------------------------------
+;fly fwd
+[Statedef 5556]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+anim = 10025
+velset = 0,0
+sprpriority = -1
+
+
+[State 0, PowerAdd]
+type = PowerAdd
+trigger1 = timemod = 5,0
+value = -10
+
+;limit for flying up
+[State 0, PosSet]
+type = PosSet
+trigger1 = pos y <= -150
+y = -150
+
+;fly stance float up
+[State 0, VelSet]
+type = VelSet
+trigger1 = gametime%30 = [0,14]
+x = 0
+y = -0.1
+
+[State 1118, Explod]
+type = Explod
+trigger1 = gametime%30 = [0,14]
+anim = 7014
+ID = 7014
+pos = -5,3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+vel = 0,0
+accel = 0,0
+random = 0,0
+removetime = -2
+pausemovetime = 0
+scale = .06,.06
+sprpriority = 3
+;ignorehitpause =
+persistent = 15
+
+[State 1118, Explod]
+type = Explod
+trigger1 = gametime%30 = [0,14]
+anim = 7014
+ID = 7014
+pos = 8,3
+postype = p1  ;p2,front,back,left,right
+facing = 1
+vfacing = 1
+bindtime = 1
+vel = 0,0
+accel = 0,0
+random = 0,0
+removetime = -2
+pausemovetime = 0
+scale = .06,.06
+sprpriority = 3
+;ignorehitpause =
+persistent = 15
+
+
+;fly stance float down
+[State 0, VelSet]
+type = VelSet
+trigger1 = gametime%30 = [15,29]
+x = 0
+y = 0.1
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+
+
+;fly forward
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [200,250]
+trigger2 = abs(p2bodydist x) > 50
+value = 101011
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+;fly backward
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdback"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [300,350]
+trigger2 = abs(p2bodydist x) < 50
+value = 101029
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+;fly up
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdup"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [400,425]
+trigger2 = p2bodydist y <= -25
+value = 101031
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+;fly down
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holddown"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [425,999]
+trigger2 = p2bodydist y >= 50
+value = 101041
+ctrl = 1
+;anim =
+;ignorehitpause =
+;persistent =
+
+; go back to semi-bird form when power is less than 1000
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = power < 10
+value = 50
+ctrl = 1
+
+;go back to jump/fall state
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = Win = 1
+value =50
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="a"
+value = 10011
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="b"
+value = 10015
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = time = 8
+value = 5550
+ctrl = 1
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = Life = 0
+value = 5050
+ctrl = 1
+
+
+;---------------------------------------------------------------------------
+;fly fwd
+[Statedef 101011]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+anim = 5551
+velset = 0,0
+sprpriority = -1
+
+[State 0, Super Velocity]
+type = ChangeState
+;triggerall = var(40) <= 4
+triggerall = power >= 1000
+trigger1 = ailevel = 0 && command = "SPECIAL 1"
+trigger2 = ailevel > 0 && random < (ailevel * 100)/2
+trigger2 = p2bodydist x = [40,200]
+value = 12500
+
+[State 0, Speed Kick]
+type = ChangeState
+Triggerall = power >= 2000
+trigger1 = ailevel = 0 && command = "SPECIAL 3"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,150]
+trigger2 = random < (ailevel * 100)/2
+value = 12200
+
+[State 0, Spin Kick]
+type = ChangeState
+Triggerall = power >= 1500
+trigger1 = ailevel = 0 && command = "SPECIAL 5"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,200]
+trigger2 = random < (ailevel * 100)/2
+value = 12000
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71678)= 0
+trigger1 = time = 0
+anim = 7167
+ID = 71678
+pos = -16,-8
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = -2
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71679)= 0
+trigger1 = time = 0
+anim = 71677
+ID = 71679
+pos = -43,-3
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, Explod]
+type = Explod
+trigger1 = animelem=2
+anim = 7052
+ID = 7052
+pos = 0,-30
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = 1
+removetime = -2
+scale = .3*Helper(999999),Fvar(16),.3*Helper(999999),Fvar(16)
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="a"
+value = 10011
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="b"
+value = 10015
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 50
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+
+;[State 0, Turn]
+;type = Turn
+;trigger1 = P2dist X < -10
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = animelem=2
+x = 8
+y = 0
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 =timemod=20,0
+value = S132,1
+volume = 10
+channel = 5
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [0,250]
+trigger2 = abs(p2bodydist x) < 20
+value = 5550
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;---------------------------------------------------------------------------
+;fly bkd
+[Statedef 101029]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+anim = 5552
+velset = 0,0
+sprpriority = -1
+
+[State 0, Super Velocity]
+type = ChangeState
+;triggerall = var(40) <= 4
+triggerall = power >= 1000
+trigger1 = ailevel = 0 && command = "SPECIAL 1"
+trigger2 = ailevel > 0 && random < (ailevel * 100)/2
+trigger2 = p2bodydist x = [40,200]
+value = 12500
+
+[State 0, Speed Kick]
+type = ChangeState
+Triggerall = power >= 2000
+trigger1 = ailevel = 0 && command = "SPECIAL 3"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,150]
+trigger2 = random < (ailevel * 100)/2
+value = 12200
+
+[State 0, Spin Kick]
+type = ChangeState
+Triggerall = power >= 1500
+trigger1 = ailevel = 0 && command = "SPECIAL 5"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,200]
+trigger2 = random < (ailevel * 100)/2
+value = 12000
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71680)= 0
+trigger1 = time = 0
+anim = 7167
+ID = 71680
+pos = -16,-4
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = -2
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71681)= 0
+trigger1 = time = 0
+anim = 71677
+ID = 71681
+pos = -43,6
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = 3
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 =timemod=20,0
+value = S132,1
+volume = 10
+channel = 6
+;lowpriority = -1
+freqmul = 1.0
+loop = 0
+pan = 0
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="a"
+value = 10011
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="b"
+value = 10015
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+
+[State 0, Turn]
+type = Turn
+trigger1 = P2dist X < -10
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = animelem=2
+x = -8
+y = 0
+
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdback"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [250,500]
+trigger2 = abs(p2bodydist x) > 50
+value = 5550
+ctrl = 1
+;---------------------------------------------------------------------------
+;fly up
+[Statedef 101031]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+;anim = 10020
+velset = 0,0
+sprpriority = -1
+
+[State 0, Super Velocity]
+type = ChangeState
+;triggerall = var(40) <= 4
+triggerall = power >= 1000
+trigger1 = ailevel = 0 && command = "SPECIAL 1"
+trigger2 = ailevel > 0 && random < (ailevel * 100)/2
+trigger2 = p2bodydist x = [40,200]
+value = 12500
+
+[State 0, Speed Kick]
+type = ChangeState
+Triggerall = power >= 2000
+trigger1 = ailevel = 0 && command = "SPECIAL 3"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,150]
+trigger2 = random < (ailevel * 100)/2
+value = 12200
+
+[State 0, Spin Kick]
+type = ChangeState
+Triggerall = power >= 1500
+trigger1 = ailevel = 0 && command = "SPECIAL 5"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,200]
+trigger2 = random < (ailevel * 100)/2
+value = 12000
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71682)= 0
+trigger1 = time = 0
+anim = 7167
+ID = 71682
+pos = -16,-1
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = -2
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71683)= 0
+trigger1 = time = 0
+anim = 71677
+ID = 71683
+pos = -43,6
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+
+[State 0, 0]
+type = ChangeAnim
+triggerall = facing = 1
+trigger1 = Anim != 10021
+value = 10021
+
+[State 0, 0]
+type = ChangeAnim
+triggerall = facing != 1
+trigger1 = Anim != 10020
+value = 10020
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 =timemod = 20,0
+value = S132,1
+volume = 10
+channel = 7
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="a"
+value = 10011
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+
+[State 0, Turn]
+type = Turn
+trigger1 = P2dist X < -10
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = pos y > -150
+x = 0
+y = -3
+
+;limit for flying up
+[State 0, PosSet]
+type = PosSet
+trigger1 = pos y <= -150
+y = -150
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno =3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdup"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [500,750]
+trigger2 = p2bodydist y < 10
+value = 5550
+ctrl = 1
+;---------------------------------------------------------------------------
+;---------------------------------------------------------------------------
+;fly down
+[Statedef 101041]
+type    = A
+movetype= I
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+;anim = 10020
+velset = 0,0
+sprpriority = -1
+
+[State 0, Super Velocity]
+type = ChangeState
+;triggerall = var(40) <= 4
+triggerall = power >= 1000
+trigger1 = ailevel = 0 && command = "SPECIAL 1"
+trigger2 = ailevel > 0 && random < (ailevel * 100)/2
+trigger2 = p2bodydist x = [40,200]
+value = 12500
+
+[State 0, Speed Kick]
+type = ChangeState
+Triggerall = power >= 2000
+trigger1 = ailevel = 0 && command = "SPECIAL 3"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,150]
+trigger2 = random < (ailevel * 100)/2
+value = 12200
+
+[State 0, Spin Kick]
+type = ChangeState
+Triggerall = power >= 1500
+trigger1 = ailevel = 0 && command = "SPECIAL 5"
+trigger2 = ailevel > 0 && roundstate = 2
+trigger2 = p2bodydist x = [50,200]
+trigger2 = random < (ailevel * 100)/2
+value = 12000
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71684)= 0
+trigger1 = time = 0
+anim = 7167
+ID = 71684
+pos = -16,-1
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = -2
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, Jet FX]
+type = Explod
+triggerall = numexplod(71685)= 0
+trigger1 = time = 0
+anim = 71677
+ID = 71685
+pos = -43,7
+postype = p1
+facing = 1
+vfacing = 1
+bindtime = -1
+removetime = -1
+;angle = -90
+vel = -3,0
+scale = .2,.3
+sprpriority = 1
+ontop = 0
+ownpal = 1
+removeongethit = 1
+supermove = 999
+supermovetime = 999
+pausemove = 999
+pausemovetime = 999
+ignorehitpause = 1
+
+[State 0, 0]
+type = ChangeAnim
+triggerall = facing = 1
+trigger1 = Anim != 10021
+value = 10021
+
+[State 0, 0]
+type = ChangeAnim
+triggerall = facing != 1
+trigger1 = Anim != 10020
+value = 10020
+
+
+[State 0, Turn]
+type = Turn
+trigger1 = P2dist X < -10
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = pos y < 0
+x = 0
+y = 2
+
+;limit for flying down
+[State 0, PosSet]
+type = PosSet
+trigger1 = pos y >= 0
+y = 0
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 =timemod = 20,0
+value = S132,1
+volume = 10
+channel = 8
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = 1
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = random < 100
+attr = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+slot = 0
+stateno = 3130
+time = 1
+forceair = 0
+;ignorehitpause =
+;persistent =
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = pos y=0
+value = 0
+ctrl = 1
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = pos y=0
+value = S5,15
+volume = 10
+channel = -1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="a"
+value = 10011
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command="b"
+value = 10015
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command = "holdfwd"
+trigger1 = command="c"
+value = 2640
+ctrl = 1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = command != "holddown"
+trigger1 = var(59) = 0
+trigger2 = var(59) > 0
+trigger2 = random = [750,999]
+trigger2 = p2bodydist y >= -10
+value = 5550
+ctrl = 1
+
+;-----------------------------------------------------------
+; hit state
+[Statedef 3130]
+type    = A
+movetype= H
+physics = N
+juggle  = 0
+poweradd= 0
+ctrl = 0
+anim =15000
+velset = 0,0
+sprpriority = -1
+
+[State 0, ChangeState]
+type = ChangeState
+trigger1 = animtime = 0
+value = 5550
+ctrl = 1
+;===============================================================================
+; A:
+;-------------------------------------------------------------------------------
+; A - 1
+[Statedef 10011]
+type    = S
+movetype= A
+physics = S
+juggle  = 2
+ctrl = 0
+anim = 2200
+poweradd = 100
+velset = 2,0
+sprpriority = 2
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 0
+fv = 6
+value = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 1
+fv = 6
+value = 0+random%7
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+
+[State 0, VelSet]
+type = Veladd
+trigger1 = movecontact = 1
+x = -1
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,1
+volume = 50
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,1
+volume = 50
+
+[State 200, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = 1
+attr = S, NA
+animtype  = Light
+damage    = 10
+guardflag = MA
+pausetime = 10,10
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S124,2
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 12
+ground.velocity = -1
+air.velocity = -1,-1
+Fall = 0
+Envshake.time = 5
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(7000) = 0
+trigger1 = Movehit = 1
+anim = 7011
+ID = 7000
+postype = P2
+pos = -6,-35
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .35,.35
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+angle = 0+random%360
+pausemovetime = ifelse(numhelper(1350) > 0,99999,0)
+
+[State 200, End]
+type = ChangeState
+Triggerall = movecontact
+trigger1 = ailevel = 0 && command = "a"
+trigger2 = roundstate = 2 && ailevel > 0 && random < (ailevel * 100)
+value = 10012
+
+[State 200, End]
+type = ChangeState
+Triggerall = movecontact
+trigger1 = ailevel = 0 && command = "b"
+trigger2 = roundstate = 2 && ailevel > 0 && random < (ailevel * 100)
+value = 2300
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 5550
+ctrl = 1
+;-------------------------------------------------------------------------------
+; A - 2
+[Statedef 10012]
+type    = S
+movetype= A
+physics = S
+juggle  = 2
+ctrl = 0
+anim = 2210
+poweradd = 100
+velset = 0,0
+sprpriority = 2
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 4
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 0
+fv = 6
+value = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 1
+fv = 6
+value = 0+random%7
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S127,0
+volume = 50
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S127,0
+volume = 50
+
+[State 200, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = 1
+attr = S, NA
+animtype  = Medium
+damage    = 10
+guardflag = MA
+pausetime = 12,12
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S124,4
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -2
+air.velocity = -2,-1
+Fall = 0
+Envshake.time = 5
+
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(7000) = 0
+trigger1 = Movehit = 1
+anim = 7011
+ID = 7000
+postype = P2
+pos = -6,-28
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .35,.35
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+angle = 0+random%360
+pausemovetime = ifelse(numhelper(1350) > 0,99999,0)
+
+[State 200, End]
+type = ChangeState
+Triggerall = movecontact
+trigger1 = ailevel = 0 && command = "a"
+trigger2 = roundstate = 2 && ailevel > 0 && random < (ailevel * 100)
+value = 10013
+
+[State 200, End]
+type = ChangeState
+Triggerall = movecontact
+trigger1 = ailevel = 0 && command = "b"
+trigger2 = roundstate = 2 && ailevel > 0 && random < (ailevel * 100)
+value = 2300
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 5550
+ctrl = 1
+;-------------------------------------------------------------------------------
+; A - 3
+[Statedef 10013]
+type    = S
+movetype= A
+physics = S
+juggle  = 2
+ctrl = 0
+anim = 2220
+poweradd = 100
+velset = 0,0
+sprpriority = 2
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 0
+fv = 6
+value = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 1
+fv = 6
+value = 0+random%7
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S127,1
+volume = 50
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S127,1
+volume = 50
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 4
+
+[State 200, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = 1
+attr = S, NA
+animtype  = Medium
+damage    = 15
+guardflag = MA
+pausetime = 10,16
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S124,3
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -4
+air.velocity = -2,-3
+Fall = 0
+Envshake.time = 5
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(7000) = 0
+trigger1 = Movehit = 1
+anim = 7011
+ID = 7000
+postype = P2
+pos = -6,-35
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .35,.35
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+angle = 0+random%360
+pausemovetime = ifelse(numhelper(1350) > 0,99999,0)
+
+[State 200, End]
+type = ChangeState
+Triggerall = movecontact
+trigger1 = ailevel = 0 && command = "a"
+trigger2 = roundstate = 2 && ailevel > 0 && random < (ailevel * 100)
+value = 10014
+
+[State 200, End]
+type = ChangeState
+Triggerall = movecontact
+trigger1 = ailevel = 0 && command = "b"
+trigger2 = roundstate = 2 && ailevel > 0 && random < (ailevel * 100)
+value = 2310
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 0
+ctrl = 1
+;-------------------------------------------------------------------------------
+; A - 4
+[Statedef 10014]
+type    = S
+movetype= A
+physics = S
+juggle  = 2
+ctrl = 0
+anim = 2230
+poweradd = 100
+velset = 0,0
+sprpriority = 2
+
+[State 0, NotHitBy]
+type = NotHitBy
+trigger1 = 1 
+value = SCA,NA,SA,HA,NP,SP,HP,NT,ST,HT
+;value2 = S,NA
+time = 1
+;ignorehitpause = 
+;persistent = 
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 0
+fv = 6
+value = 0
+
+[State 0, VarSet]
+type = VarSet
+trigger1 = time = 1
+fv = 6
+value = 0+random%7
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 1
+value = S126,0+fvar(6)
+volume = 999
+
+[State 0, Teleport]
+type = Helper
+trigger1 = time = 0||time = 5
+helpertype = normal
+name = "Teleport"
+ID = 580
+stateno = 580
+pos = 0,-25*Helper(999999),Fvar(16)
+postype = p1
+facing = 1
+keyctrl = 0
+ownpal = 1
+size.xscale = .2*Helper(999999),Fvar(16)
+size.yscale = .2*Helper(999999),Fvar(16)
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S5,22
+volume = 50
+
+[State 0, ScreenBound]
+type = ScreenBound
+trigger1 = time < 5
+value = 0
+
+[State 0, PosAdd]
+type = PosAdd
+trigger1 = time = 4
+x = p2bodydist x + 50
+
+[State 0, Turn]
+type = Turn
+triggerall = p2bodydist x < 0
+trigger1 = time = 4
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 5
+x = 2
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 12
+value = S127,0
+volume = 50
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 12
+value = S127,0
+volume = 50
+
+[State 200, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = 1
+attr = A, NA
+animtype  = Up
+damage    = 20
+guardflag = MA
+pausetime = 0,0
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S124,0
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -2.4,-9
+air.velocity = -2.4,-9
+Fall = 1
+Envshake.time = 5
+p2stateno = 8455
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(7000) = 0
+trigger1 = Movehit = 1
+anim = 7011
+ID = 7000
+postype = P2
+pos = -6,-28
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .35,.35
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+angle = 0+random%360
+pausemovetime = ifelse(numhelper(1350) > 0,99999,0)
+
+[State 200, End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 50
+ctrl = 1
+;-------------------------------------------------------------------------------
+;===============================================================================
+; Kick:
+;-------------------------------------------------------------------------------
+; Hold
+[Statedef 10015]
+type    = S
+movetype= I
+physics = S
+juggle  = 1
+ctrl = 0
+anim = 2400
+poweradd = 50
+sprpriority = 2
+
+
+
+[State 200, End]
+type = ChangeState
+trigger1 = time = 8
+value = 10016
+
+;-------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
+; Golpe 1
+[Statedef 10016]
+type    = S
+movetype= A
+physics = S
+juggle  = 1
+velset = 0,0
+ctrl = 0
+anim = 2410
+poweradd = 50
+sprpriority = 2
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = time = 0
+x = 2
+y = 1
+
+[State 0, VelSet]
+type = VelSet
+trigger1 = pos y >= 0
+y = 0
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S127,2
+volume = 250
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S127,2
+volume = 250
+
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S129,1
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S129,1
+volume = 999
+[State 0, PlaySnd]
+type = PlaySnd
+trigger1 = time = 0
+value = S129,1
+volume = 999
+
+[State 200, 1]
+type = HitDef
+triggerall = !movecontact
+trigger1 = 1
+attr = S, NA
+animtype  = Heavy
+damage    = 30
+guardflag = MA
+pausetime = 12,12
+sparkno = -1
+guard.sparkno = s7000
+sparkxy = -8,-25
+hitsound   = S1,14
+guardsound = S4,1
+ground.type = High
+ground.slidetime = 12
+ground.hittime  = 15
+ground.velocity = -8,-4
+air.velocity = -8,-4
+Fall = 1
+Envshake.time = 25
+
+[State 200, Spark CVS]
+type = Explod
+triggerall = Numexplod(7001) = 0
+trigger1 = Movehit = 1
+anim = 7010
+ID = 7001
+postype = P2
+pos = 0,-30
+facing = -1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .8*Helper(999999),Fvar(16),.8*Helper(999999),Fvar(16)
+removeongethit = 1
+ontop = 1
+supermovetime 	= 999
+ignorehitpause  = 1
+
+[State 200, End]
+type = ChangeState
+triggerall = hitcount > 0
+trigger1 = AnimTime = 0
+value = 50
+ctrl = 1
+[State 200, End]
+type = ChangeState
+triggerall = hitcount = 0
+trigger1 = AnimTime = 0
+value = 5550
+ctrl = 1
+;-------------------------------------------------------------------------------

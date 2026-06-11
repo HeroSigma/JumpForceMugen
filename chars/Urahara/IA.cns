@@ -1,0 +1,514 @@
+[Statedef -2]
+
+[State -2, AI HELPER]
+type = Helper
+trigger1 = !NUMHELPER(999999) && !ishelper
+name = "AI HELPER"
+ID = 999999
+stateno = 999999
+pos = 999,999
+postype = P1
+keyctrl = 0
+ownpal = 1
+supermovetime = 999999
+pausemovetime = 999999
+
+[State -2, Juggle Count]
+type = VarAdd
+trigger1 = !IsHelper  && stateno !=[4603,4614]
+trigger1 = MoveHit = 1
+trigger1 = !HitPauseTime
+trigger1 = !(HitDefAttr = SCA,AT)
+var(45) = 1
+
+[State -2, Juggle Reset Single]
+type = VarSet
+triggerAll = NumEnemy = 1 && var(45) 
+trigger1 = (Enemy, StateType != A) && (Enemy, StateNo != [5100, 5109]) && (Enemy, Time >= 1)
+trigger2 = (Enemy, MoveType != H) || (Enemy, StateNo = [120,155]) || (Enemy, Ctrl)
+var(45) = 0
+ignoreHitPause = 1
+
+[State -2, Juggle Reset Simul]
+type = VarSet
+triggerAll = NumEnemy >= 2 && var(45)
+trigger1 = (EnemyNear(0), StateType != A) && (EnemyNear(0), Time >= 1)
+trigger2 = (EnemyNear(0), MoveType != H) || (EnemyNear(0), StateNo = [120,155]) || (EnemyNear(0), Ctrl)
+trigger3 = (EnemyNear(1), StateType != A) && (EnemyNear(0), Time >= 1)
+trigger4 = (EnemyNear(1), MoveType != H) || (EnemyNear(0), StateNo = [120,155]) || (EnemyNear(0), Ctrl)
+var(45) = 0
+ignoreHitPause = 1
+
+[State -2, Free Juggling]
+type = VarSet
+trigger1 = RoundState != 2
+var(45) = 0
+ignoreHitPause = 1
+
+[State -2, Juggle Flag]
+type = VarSet
+trigger1 = NumEnemy && !var(46)
+trigger1 = (EnemyNear, StateNo = 5040) && !(EnemyNear, Ctrl)
+var(46) = 1
+ignorehitpause = 1
+
+[State -2, Juggle Flag Reset Single]
+type = VarSet
+triggerAll = NumEnemy = 1 && var(46)
+trigger1 = (Enemy, MoveType != H) && (Enemy, StateNo != 5040)
+trigger2 = !(Enemy, HitShakeOver) || (Enemy, StateType = L) || (Enemy, Ctrl)
+var(46) = 0
+ignoreHitPause = 1
+
+[State -2, Juggle Flag Reset Simul]
+type = VarSet
+triggerAll = NumEnemy >= 2 && var(46)
+trigger1 = (EnemyNear(0), MoveType != H) && (EnemyNear(0), StateNo != 5040)
+trigger2 = !(EnemyNear(0), HitShakeOver) || (EnemyNear(0), StateType = L) || (EnemyNear(0), Ctrl)
+trigger3 = (EnemyNear(1), MoveType != H) && (EnemyNear(1), StateNo != 5040)
+trigger4 = !(EnemyNear(1), HitShakeOver) || (EnemyNear(1), StateType = L) || (EnemyNear(1), Ctrl)
+var(46) = 0
+ignoreHitPause = 1
+
+[state -2, juggle check]
+type = assertSpecial
+trigger1 = roundstate = 2 
+flag = nojugglecheck
+
+[State -2, yaccel]
+Type = VarSet
+TriggerAll = NumHelper(999999)
+TriggerAll = EnemyNear(var(59)),Vel Y != 0
+TriggerAll = EnemyNear(var(59)),Pos Y < (((EnemyNear(var(59)),Anim != [5051,5059]) && (EnemyNear(var(59)),Anim != [5061,5069 ])) && (EnemyNear(var(59)),StateNo = 5050))*25 
+TriggerAll = fvar(20) != Helper(999999),fvar(0)
+Trigger1 = EnemyNear(var(59)) ,StateNo != [5000,5210]
+Trigger2 = EnemyNear(var(59)),MoveType != H
+FV = 20
+Value = Helper(999999),fvar(0)
+IgnoreHitPause = 1
+
+[State -2, yaccel]
+Type = VarSet
+TriggerAll = EnemyNear(var(59)),Vel Y != 0
+TriggerAll = EnemyNear(var(59)),MoveType = H
+TriggerAll = EnemyNear(var(59)),Pos Y < (((EnemyNear(var(59)),Anim != [5051,5059]) && (EnemyNear(var(59)),Anim != [5061,5069 ])) && (EnemyNear(var(59)),StateNo = 5050))*25
+TriggerAll = fvar(20) != EnemyNear(var(59)),GetHitVar(yaccel) 
+Trigger1 = EnemyNear(var(59)),StateNo = [5000,5210]
+FV = 20
+Value = EnemyNear(var(59)),GetHitVar(yaccel)
+IgnoreHitPause = 1
+
+[State -2, yaccel]
+Type = VarSet 
+Trigger1= fvar(20) != 0 && EnemyNear(var(59)),Vel Y = 0
+FV = 20
+Value = 0
+IgnoreHitPause = 1
+
+[state -2]
+type = varset
+triggerall = helper(999999),fvar(13) > helper(999999),fvar(14) || helper(999999),fvar(15) > helper(999999),fvar(16)|| helper(999999),fvar(17) > helper(999999),fvar(18)
+triggerall = numhelper(999999) && roundstate = 2
+trigger1 = ailevel && !fvar(37)
+fvar(37) = ((helper(999999),fvar(13)/helper(999999),fvar(14))*(helper(999999),fvar(13) > helper(999999),fvar(14)))+((helper(999999),fvar(17)/helper(999999),fvar(18))*(helper(999999),fvar(17) > helper(999999),fvar(18)))+((helper(999999),fvar(15)/helper(999999),fvar(16))*(helper(999999),fvar(15) > helper(999999),fvar(16)))
+
+[state -2]
+type = attackmulSet
+trigger1 = ailevel && fvar(37) && roundstate = 2
+value = fvar(37)
+
+[state -2 detecto]
+type = varset
+triggerall = var(52) = 0 && teammode != simul
+trigger1 = movereversed = 1
+var(52) = enemynear(var(59)),prevstateno
+ignorehitpause = 1
+
+[State -2, DisplayToClipboard]
+type = DisplayToClipboard
+trigger1 = 1
+text = "p2bodydist x = %d, p2bodydist y = %d\nvel x = %d, vel y = %d, prevstateno = %d, var(45) = %d"
+params = p2bodydist x, floor(p2bodydist y), vel x, vel y, prevstateno, var(45)
+ignorehitpause = 1
+
+[Statedef -3]
+
+[state -3, AI Detect Projectile System]
+type = helper
+trigger1 = ailevel
+trigger1 = !numhelper(33333333)
+name = "AI Detect Projectile System"
+ID = 33333333
+stateno = 33333333
+postype = p1
+ownpal = 1
+keyctrl = 0
+size.xscale = 1.0
+size.yscale = 1.0
+supermovetime = 2147483647
+pausemovetime = 2147483647
+ignorehitpause = 1
+
+[State -3,]
+type = varset
+trigger1 = ailevel
+var(59) = cond((!EnemyNear,Alive && NumEnemy = 2),1,0)
+
+;===============================================================================
+; Turn Transformaciones:
+;-------------------------------------------------------------------------------
+[State -3, Turn Fullbring level 2]
+type = ChangeAnim
+trigger1 = var(2) = 2
+trigger1 = anim = 5
+value = 11005
+
+[State -3, Turn Fullbring level 3]
+type = ChangeAnim
+trigger1 = var(2) = 3
+trigger1 = anim = 5
+value = 13005
+;===============================================================================
+; SSR:
+;-------------------------------------------------------------------------------
+[State -3, VarSet - Fullbring 2]
+type = VarSet
+trigger1 = palno = 2
+v = 2
+value = 2
+
+[State -3, VarSet - Fullbring 2]
+type = VarSet
+trigger1 = numhelper(960) = 1
+v = 2
+value = 2
+
+[State -3, VarSet - Fullbring 2]
+type = VarSet
+trigger1 = numhelper(961) = 1
+v = 2
+value = 0
+
+[State -3, VarSet, Golpeado]
+type = VarSet
+trigger1 = var(2) = 2
+v = 10
+value = 7000
+
+[State -3, VarSet, Apariencia]
+type = VarSet
+trigger1 = var(2) = 2
+v = 11
+value = 11000
+
+[State -3, VarSet, Specials]
+type = VarSet
+trigger1 = var(2) = 2
+v = 14
+value = 26000
+
+[State -3, VarSet, Supers]
+type = VarSet
+trigger1 = var(2) = 2
+v = 15
+value = 25000
+
+[State 0, AttackMulSet]
+type = AttackMulSet
+trigger1 = var(2) = 2
+value = 1.2
+;===============================================================================
+; Fullbring 3:
+;-------------------------------------------------------------------------------
+[State -3, VarSet - Bankai]
+type = VarSet
+trigger1 = palno = 3
+v = 2
+value = 3
+
+[State -3, VarSet - Bankai]
+type = VarSet
+trigger1 = numhelper(970) = 1
+v = 2
+value = 3
+
+[State -3, VarSet - Bankai]
+type = VarSet
+trigger1 = numhelper(971) = 1
+v = 2
+value = 2
+
+[State -3, VarSet, Golpeado]
+type = VarSet
+trigger1 = var(2) = 3
+v = 10
+value = 9000
+
+[State -3, VarSet, Apariencia]
+type = VarSet
+trigger1 = var(2) = 3
+v = 11
+value = 13000
+
+[State -3, VarSet, Specials]
+type = VarSet
+trigger1 = var(2) = 3
+v = 14
+value = 28000
+
+[State -3, VarSet, Supers]
+type = VarSet
+trigger1 = var(2) = 3
+v = 15
+value = 27000
+
+[State 0, AttackMulSet]
+type = AttackMulSet
+trigger1 = var(2) = 3
+value = 1.4
+
+[State -3, VarSet - Bankai]
+type = VarSet
+trigger1 = numhelper(981) = 1
+v = 2
+value = 2
+
+;========================
+
+[State 0, AttackMulSet]
+type = AttackMulSet
+trigger1 = var(2) = 4
+value = 1.6
+  
+[State 0, DefenceMulSet]
+type = AttackMulSet
+trigger1 = var(2) = 4
+value = 1.125
+
+
+;-------------------------------------------------------------------------------
+; COMUNES:
+[State -3, VarSet,Apariencia]
+type = VarSet
+trigger1 = var(2) = 0
+v = 11
+value = 0
+
+[State -3, VarSet,Golpeado]
+type = VarSet
+trigger1 = var(2) = 0
+v = 10
+value = 0
+
+[State -3, VarSet, Specials]
+type = VarSet
+trigger1 = var(2) = 0
+v = 14
+value = 0
+
+[State -3, VarSet, Supers]
+type = VarSet
+trigger1 = var(2) = 0
+v = 15
+value = 0
+
+;-------------------------------------------------------------------------------
+; FVARS:
+;-------------------------------------------------------------------------------
+[State 0, VarSet] ; Base
+type = VarSet
+trigger1 = var(2) = 0
+fv = 3
+value = 0
+
+[State 0, VarSet] ; Shikai
+type = VarSet
+trigger1 = var(2) = 2
+fv = 2
+value = .2
+
+[State 0, VarSet] ; Bankai
+type = VarSet
+trigger1 = var(2) = 3
+fv = 2
+value = .3
+
+;===============================================================================
+; Pared Rota:
+;-------------------------------------------------------------------------------
+[State 0, Helper]
+type = Helper
+triggerall = p2movetype = H
+triggerall = numhelper(4160) = 0
+trigger1 = p2stateno = 4156
+helpertype = normal
+name = "Pared Rota"
+ID = 4160
+stateno = 4160
+pos = 0,-30
+postype = p2
+facing = 1
+keyctrl = 0
+ownpal = 1
+
+
+
+[State 0, HitOverride]
+type = HitOverride
+trigger1 = numhelper(690) && random <= 1000
+attr = SCA, AA, NA, SA, HA, NP, SP, HP, AP, AT
+stateno = 680
+time = 1
+ignorehitpause = 0
+
+
+;===============================================================================
+; Polvo en P2:
+;-------------------------------------------------------------------------------
+[State 0, Helper]
+type = Helper
+triggerall = p2movetype = H
+triggerall = numhelper(4165) = 0
+trigger1 = p2stateno = 4155
+helpertype = normal
+name = "Polvo en P2"
+ID = 4165
+stateno = 4165
+pos = 0,0
+postype = p1
+facing = 1
+keyctrl = 0
+ownpal = 1
+;-------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
+; Sonidos Comunes:
+;-------------------------------------------------------------------------------
+[State 0, Andando]
+type = PlaySnd
+triggerall = stateno = 20
+trigger1 = animelem = 4 || animelem = 8
+value = S20,1
+volume = 50
+
+[State 0, Saltando]
+type = PlaySnd
+triggerall = stateno = 40
+trigger1 = Time = 1
+value = S40,1
+volume = 55
+channel = -1
+
+[State 0, Super Jump]
+type = PlaySnd
+triggerall = stateno = 80
+trigger1 = Time = 4
+value = S60,1
+volume = 99
+channel = -1
+
+
+[State 0, Super Jump]
+type = PlaySnd
+triggerall = stateno = 11080
+trigger1 = Time = 4
+value = S60,1
+volume = 99
+channel = -1
+
+[State 0, Super Jump]
+type = PlaySnd
+triggerall = stateno = 13080
+trigger1 = Time = 4
+value = S60,1
+volume = 99
+channel = -1
+
+[State 0, Super Jump]
+type = PlaySnd
+triggerall = stateno = 80
+trigger1 = Time = 1
+value = S60,0
+volume = 99
+channel = -1
+
+
+[State 0, Super Jump]
+type = PlaySnd
+triggerall = stateno = 11080
+trigger1 = Time = 1
+value = S60,0
+volume = 99
+channel = -1
+
+[State 0, Super Jump]
+type = PlaySnd
+triggerall = stateno = 13080
+trigger1 = Time = 1
+value = S60,0
+volume = 99
+channel = -1
+
+[State 0, Land]
+type = PlaySnd
+triggerall = stateno = 52
+trigger1 = time = 1
+value = S52,1
+volume = 50
+
+[State 0, Run]
+type = PlaySnd
+triggerall = stateno = 60||stateno = 70
+trigger1 = time = 1
+value = S40,2
+volume = 50
+
+[State 0, RemoveExplod]
+type = RemoveExplod
+TRIGGERALL = stateno != 500
+trigger1 = time = 1
+id = 550
+
+[State 0, StopSnd]
+type = StopSnd
+TRIGGERALL = stateno != 500
+trigger1 = time = 1
+channel = 1
+
+[State 0, StopSnd]
+type = StopSnd
+TRIGGERALL = stateno != 500
+trigger1 = time = 1
+channel = 2
+
+[State 0, Golpeado]
+type = PlaySnd
+trigger1 = movetype=H && (stateno!=[0,155]) && !time && HitOver=0 && random%3=0
+value = 5000,ifelse(random < 500,1,ifelse(random < 500,2,3))
+
+[State 0, Solucion Stand Aire]
+type = ChangeState
+triggerall = stateno = 0||stateno = 20
+trigger1 = pos y < 0
+value = 50
+ctrl = 1
+;===============================================================================
+; GUARD SPARK:
+;-------------------------------------------------------------------------------
+[State 0, Guard Spark]
+type = Explod
+triggerall = numexplod(6100) = 0
+trigger1 = moveguarded = 1
+anim = 6100
+ID = 6100
+postype = P2
+pos = 8,-30
+facing = 1
+sprpriority = 2
+supermove = 1
+removetime = -2
+bindtime = 1
+ownpal = 1
+scale = .4,.4
+removeongethit = 1
+ontop = 1
+ignorehitpause = 1
