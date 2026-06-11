@@ -1,0 +1,581 @@
+# Shadow Assist System by Phantom.of.the.Server
+# For Ikemen GO September 2024 build and above
+
+# See the readme for installation instructions
+
+
+#==================================================================================================
+#                                          CONFIGURATION                                          #
+#==================================================================================================
+
+[Function F_PotS_shadowassist_Config()]
+
+### RULES ###
+
+mapset{map: "_pots_shadowassist_cfg_autoinput"; value: 0}			# Enable to always use shadows when available without needing extra button presses
+mapset{map: "_pots_shadowassist_cfg_maxshadows"; value: 1}			# Maximum number of simultaneous shadows
+mapset{map: "_pots_shadowassist_cfg_gaugecost"; value: 1000}		# How much gauge is spent when creating a shadow. Out of 1000
+mapset{map: "_pots_shadowassist_cfg_gauge_refill"; value: 3.0}		# Gauge recovery speed
+mapset{map: "_pots_shadowassist_cfg_cooldown"; value: 120}			# Time to wait before being allowed to create another shadow
+mapset{map: "_pots_shadowassist_cfg_allowcombo"; value: 1}			# Disable to only allow shadows when the player has control
+mapset{map: "_pots_shadowassist_cfg_damage"; value: 0.50}			# Base attack multiplier for shadows
+mapset{map: "_pots_shadowassist_cfg_scaling"; value: 250}			# Damage scaling. When combo damage reaches this value, scaling will be at 50%
+mapset{map: "_pots_shadowassist_cfg_unblockables"; value: 0}		# With this setting disabled, shadows can always be blocked either high or low or in the air
+
+
+### GAUGE TEXT ###
+
+mapset{map: "_pots_shadowassist_cfg_text_font"; value: -1}			# Font number to use from the lifebars. Default -1 (debug font)
+mapset{map: "_pots_shadowassist_cfg_text_layer"; value: 0}			# Layer number for text. 0 behind chars. 1 in front
+mapset{map: "_pots_shadowassist_cfg_text_scale"; value: 0.55}		# Text scale
+mapset{map: "_pots_shadowassist_cfg_text_posx"; value: 80}			# Text X offset
+mapset{map: "_pots_shadowassist_cfg_text_posy"; value: 41}			# Text Y offset
+mapset{map: "_pots_shadowassist_cfg_text_shadow"; value: 1}			# Draw shadows under text
+
+
+#==================================================================================================
+#                                            STATE -4                                             #
+#==================================================================================================
+
+[StateDef -4]
+
+ignorehitpause if !ishelper && teamside > 0 {
+
+	# Initialize
+	if roundstate = 0 && time = 0 {
+		# Run config
+		call F_PotS_shadowassist_Config();
+		# Reset variables
+		mapset{map: "_pots_shadowassist_combo"; value: 0}
+		mapset{map: "_pots_shadowassist_cooldown"; value: 0}
+		mapset{map: "_pots_shadowassist_gauge"; value: 1000}
+		mapset{map: "_pots_shadowassist_input"; value: 0}
+		mapset{map: "_pots_shadowassist_power"; value: 0}
+		mapset{map: "_pots_shadowassist_stopctrl"; value: 0}
+	}
+
+	# Restore power
+	# Prevents EX moves and such from burning meter twice
+	ignorehitpause if !ishelper && map(_pots_shadowassist_power) > 0 {
+		if map(_pots_shadowassist_power) > power {
+			powerset{value: map(_pots_shadowassist_power)}
+		}
+		mapset{map: "_pots_shadowassist_power"; value: 0}
+	}
+
+	# Stop control
+	if map(_pots_shadowassist_stopctrl) > 0 {
+		ctrlset{value: 0}
+		mapadd{map: "_pots_shadowassist_stopctrl"; value: -1}
+		if map(_pots_shadowassist_stopctrl) <= 0 {
+			ctrlset{value: 1}
+		}
+	}
+
+}
+
+
+#==================================================================================================
+#                                            STATE -2                                             #
+#==================================================================================================
+
+[StateDef -2]
+
+ignorehitpause if roundstate = 2 && teamside > 0 {
+
+	# Recover Gauge
+	if p2, pausetime = 0
+	&& map(_pots_shadowassist_gauge) < 1000
+	&& map(_pots_shadowassist_cooldown) <= 0
+	&& map(_pots_shadowassist_combo) = 0 {
+		let refillmul = 1.0;
+		if movetype = H || stateno = [5000, 5999] || dizzy || dizzypoints <= 0 {
+			let refillmul = 0.5;
+		} else if p2dist x > 0 && vel x > 0 {
+			let refillmul = 2.0;
+		} else {
+			let refillmul = 1.0;
+		}
+		let refillrate = $refillmul * map(_pots_shadowassist_cfg_gauge_refill);
+		# Refill faster in Training mode
+		if gamemode = "training" && $refillrate < 50.0 {
+			let refillrate = 50.0;
+		}
+		mapadd{map: "_pots_shadowassist_gauge"; value: $refillrate}
+	}
+
+	# Reset combo flag
+	if p2movetype != H && p2, dizzy = 0
+	&& map(_pots_shadowassist_combo) != 0 {
+		mapset{map: "_pots_shadowassist_combo"; value: 0}
+	}
+
+	# Cooldown timer
+	if map(_pots_shadowassist_cooldown) > 0 {
+		mapadd{map: "_pots_shadowassist_cooldown"; value: -1}
+	}
+
+	# Gauge limits
+	if map(_pots_shadowassist_gauge) < 0 { # Minimum
+		mapset{map: "_pots_shadowassist_gauge"; value: 0}
+	}
+	if map(_pots_shadowassist_gauge) > 1000 { # Maximum
+		mapset{map: "_pots_shadowassist_gauge"; value: 1000}
+	}
+
+}
+
+
+#==================================================================================================
+#                                            STATE +1                                             #
+#==================================================================================================
+
+[Statedef +1]
+
+# Root code
+ignorehitpause if !ishelper && teamside > 0 {
+
+	# Input handling
+	if map(_pots_shadowassist_input) > 0 {
+		mapadd{map: "_pots_shadowassist_input"; value: -1}
+	}
+	let buffertime = 1 + hitpausetime;
+	if map(_pots_shadowassist_cfg_autoinput) {
+		mapset{map: "_pots_shadowassist_input"; value: $buffertime}
+	} else {
+		if AIlevel {
+			if random < ((250 + 500) * AIlevel / 8.0)
+			&& random < ifelse(vel x < 0, 500, 1000)
+			&& (p2statetype != L || p2stateno = 5120) { # Using a shadow is often recommended so we just do this check
+				mapset{map: "_pots_shadowassist_input"; value: $buffertime}
+			}
+		} else {
+			# Hold start or tag buttons
+			if inputtime(s) > 0 || inputtime(d) > 0 || inputtime(w) > 0 {
+				mapset{map: "_pots_shadowassist_input"; value: $buffertime}
+			# Press a button while holding another one
+			} else if inputtime(a) = 1 || inputtime(b) = 1 || inputtime(c) = 1
+			|| inputtime(x) = 1 || inputtime(y) = 1 || inputtime(z) = 1 {
+				if inputtime(a) >= 5 || inputtime(b) >= 5 || inputtime(c) >= 5
+				|| inputtime(x) >= 5 || inputtime(y) >= 5 || inputtime(z) >= 5 {
+					mapset{map: "_pots_shadowassist_input"; value: $buffertime}
+				}
+			}
+		}
+	}
+
+	# Save jumping parameters
+	# We will need them if the player is returned to the jumping state
+	if stateno = 50 {
+		mapset{map: "_pots_shadowassist_jump_anim"; value: anim}
+		mapset{map: "_pots_shadowassist_jump_animelem"; value: animelemno(0)}
+		mapset{map: "_pots_shadowassist_jump_velx"; value: vel x}
+		mapset{map: "_pots_shadowassist_jump_vely"; value: vel y}
+	}
+
+	# Shadow creation
+	if !ishelper && roundstate = 2 {
+
+		# Check is a shadow already exists
+		# Maybe limit their number to a config
+		let shadowcount = 0;
+		if numhelper {
+			for i = 1; numhelper; 1 {
+				if playerIDexist(helperindex($i), ID) {
+					if helperindex($i), helpername = "Shadow Assist Module" {
+						let shadowcount = $shadowcount + 1;
+					}
+				}
+			}
+		}
+
+		# Check if shadows are used in a combo
+		if $shadowcount > 0 {
+			if p2movetype = H || p2, dizzy {
+				mapset{map: "_pots_shadowassist_combo"; value: 1}
+			}
+		}
+
+		# Check if using a shadow is allowed
+		if $shadowcount < map(_pots_shadowassist_cfg_maxshadows)
+		&& map(_pots_shadowassist_cooldown) <= 0
+		&& map(_pots_shadowassist_gauge) >= map(_pots_shadowassist_cfg_gaugecost) {
+			let canuseshadow = 1;
+		}
+
+		# Create the shadow
+		if !time
+		&& !pausetime
+		&& !incustomstate
+		&& $canuseshadow
+		&& map(_pots_shadowassist_input) > 0
+		&& movetype = A
+		&& stateno = [1000, 2999]
+		&& (prevstateno = [0, 119] || prevstateno = 140 || prevstateno = [200, 799] && map(_pots_shadowassist_cfg_allowcombo)) {
+
+			# Spend gauge
+			mapadd{map: "_pots_shadowassist_gauge"; value: -abs(map(_pots_shadowassist_cfg_gaugecost))}
+			mapset{map: "_pots_shadowassist_cooldown"; value: map(_pots_shadowassist_cfg_cooldown)}
+
+			# Visual and audio cues
+			# Edit here to use your own sounds and effects
+			palfx{time: 15; add: 128, 128, 128; sinadd: -128, -128, -128, 60}
+			playsnd{
+				value: F 20, 0;
+				volumescale: 75;
+				freqmul: 1.20;
+			}
+			explod{
+				postype: p1;
+				pos: const(size.head.pos.x) / 2.0, const(size.head.pos.y) / 2.0;
+				sprpriority: 10;
+				anim: F 100;
+				trans: addalpha;
+				alpha: 256, 256;
+				scale: 0.6667, 0.6667;
+				angle: 45 * (random % 8);
+				bindtime: 30;
+				removetime: 30;
+				pausemovetime: -1;
+				supermovetime: -1;
+				interpolation.time: 30;
+				interpolation.alpha: 0, 256;
+				ownpal: 1
+			}
+
+			# Create shadow
+			helper{
+				helpertype: normal;
+				stateno: stateno;
+				name: "Shadow Assist Module";
+				postype: p1;
+				pos: 0, 0;
+				size.xscale: const(size.xscale);
+				size.yscale: const(size.yscale);
+				# pausemovetime: p2, pausetime;
+				# supermovetime: p2, pausetime;
+				extendsmap: 1;
+				ownpal: 1;
+			}
+
+			# Copy root variables
+			for i = 0; 59; 1 {
+				playerID(lastplayerID), var($i) := var($i); # No VarSet in ZSS
+			}
+
+			# Save power
+			mapset{map: "_pots_shadowassist_power"; value: power}
+
+			# Stop duplicate sounds
+			stopsnd{channel: 0}
+
+			# Stop control
+			mapset{map: "_pots_shadowassist_stopctrl"; value: 5}
+
+			# Back to idle state
+			if abs(pos y) < const240p(5) {
+				selfstate{value: ifelse(statetype = L, 5120, ifelse(statetype = C, 11, 0)); continue: 1}
+				posset{y: 0}
+			} else {
+				velset{x: map(_pots_shadowassist_jump_velx); y: map(_pots_shadowassist_jump_vely)}
+				selfstate{value: 51; continue: 1}
+				if map(_pots_shadowassist_jump_anim) && map(_pots_shadowassist_jump_animelem) {
+					changeanim{value: map(_pots_shadowassist_jump_anim); elem: map(_pots_shadowassist_jump_animelem)}
+				} else {
+					changeanim{value: ifelse(vel x < 0, 43, ifelse(vel x > 0, 42, 41))}
+				}
+			}
+		}
+	}
+}
+
+# Shadow behavior
+ignorehitpause if ishelper && helpername = "Shadow Assist Module" {
+
+	if movetype = H {
+		nothitby{value: SCA; time: -1}
+	} else {
+		hitby{value: SCA, AA, AP; time: -1}
+	}
+
+	hitoverride{attr: SCA, AT; stateno: 5000; slot: 0}
+
+	if cond(numtarget, target, gethitvar(isbound) = 0, 1) {
+		screenbound{value: 0; movecamera: 0, 0}
+	} else {
+		screenbound{value: 1; movecamera: 0, 0}
+	}
+
+	# Prevent pauses
+	# Better without this
+	#if !pausetime && p2, pausetime > 0 {
+	#	superpause{time: 0}
+	#}
+
+}
+
+# Shadow children behavior
+if ishelper {
+	if !time
+	&& playerIDexist(parent, ID)
+	&& (parent, helpername = "Shadow Assist Module" || parent, map(_pots_shadowassist_shadowchild)) {
+		mapset{map: "_pots_shadowassist_shadowchild"; value: 1}
+		# Erase helper ID to bypass numhelper triggers
+		modifyplayer{helperID: 0}
+	}
+	if map(_pots_shadowassist_shadowchild) {
+		if time >= 60
+		&& !playerIDexist(parent, ID) {
+			if time >= 300
+			|| frontedgedist < const240p(-60)
+			|| backedgedist < const240p(-60) {
+				destroyself{removeexplods: 1}
+			}
+		}
+	}
+}
+
+# Behavior shared between shadows and their helpers
+ignorehitpause if ishelper && (helpername = "Shadow Assist Module" || map(_pots_shadowassist_shadowchild)) {
+
+	# Safety timer
+	if pausetime = 0 {
+		mapadd{map: "_pots_shadowassist_shadowtimer"; value: 1}
+	}
+
+	# Prevent unblockables
+	if !map(_pots_shadowassist_cfg_unblockables) {
+		if hitdefattr = SCA, AA, AP {
+			modifyhitdef{guardflag: MA}
+		}
+	}
+
+	# Base attack multiplier
+	if attack > map(_pots_shadowassist_cfg_damage) {
+		attackmulset{value: root, map(_pots_shadowassist_cfg_damage)}
+	}
+
+	# Damage scaling
+	if movehitvar(frame)
+	&& pausetime = 0 && p2, pausetime = 0 {
+		superpause{
+			time: p2, pausetime;
+			anim: -1; darken: 0;
+			# Calculate scaling based on combo damage and current P2 defense
+			p2defmul: (p2, receiveddamage + root, map(_pots_shadowassist_cfg_scaling)) / root, map(_pots_shadowassist_cfg_scaling) * (1.0 * p2, const(data.defence) / p2, defence);
+		}
+	}
+
+	# Hitstun decay
+	# Mostly in case a shadow gets stuck in some attack
+	if numtarget
+	&& movehitvar(frame)
+	&& target, gethitvar(frame)
+	&& target, gethitvar(ID) {
+		let mul = ifelse(map(_pots_shadowassist_shadowtimer) < 60, 1.0, 1.0 - (map(_pots_shadowassist_shadowtimer) - 60) / 300.0);
+		gethitvarset{
+			redirectID: target, ID;
+			hittime: target, gethitvar(hittime) * $mul;
+			ctrltime: target, gethitvar(hittime) * $mul;
+		}
+	}
+
+	# Layering
+	if sprpriority < 3 {
+		sprpriority{value: 3; layerno: layerno}
+	}
+
+	# Colors
+	# Edit here to customize shadow colors
+	if teamside = 1 {
+		palfx{
+			color: 0;
+			mul: 256, 0, 0;
+			add: 32, 32, 32;
+			time: -1
+		}
+	}
+	if teamside = 2 {
+		palfx{
+			color: 0;
+			mul: 0, 0, 256;
+			add: 32, 32, 32;
+			time: -1
+		}
+	}
+
+	# Transparency
+	trans{trans: addalpha; alpha: min(animframe(alphasource), alpha source), max(animframe(alphadest), alpha dest) + 64}
+
+	# Sound distortion
+	for i = 0; 32; 1 {
+		modifysnd{channel: $i; volumescale: 80; freqmul: 1.0 + 0.1 * cos(gametime / 8.0 * pi)}
+	}
+}
+
+# Destroy shadows
+# Placed last so that the fading effect reads the previous trans parameters
+ignorehitpause if ishelper && helpername = "Shadow Assist Module" {
+
+	# Remove self
+	if ctrl
+	|| root, movetype = H
+	|| movetype = H && hitshakeover
+	|| frontedgedist < const240p(-120)
+	|| backedgedist < const240p(-120)
+	|| map(_pots_shadowassist_shadowtimer) >= 300 {
+		if cond(numtarget, target, gethitvar(isbound) = 0, 1) {
+			# Antifreeze
+			for i = 1; playercount; 1 {
+				if playerindexexist($i)
+				&& playerindex($i), gethitvar(ID) = ID {
+					# Add acceleration just in case
+					if playerindex($i), gethitvar(yaccel) <= const240p(0.35) {
+						gethitvarset{yaccel: const240p(0.35); redirectID: playerindex($i), ID}
+					}
+					# Exit custom states
+					if playerindex($i), incustomstate {
+						if playerindex($i), statetype = L {
+							selfstate{value: 5120; redirectID: playerindex($i), ID}
+						} else if playerindex($i), statetype = A {
+							selfstate{value: 5050; redirectID: playerindex($i), ID}
+						} else if playerindex($i), statetype = C {
+							selfstate{value: 5011; redirectID: playerindex($i), ID}
+						} else {
+							selfstate{value: 5001; redirectID: playerindex($i), ID}
+						}
+					}
+				}
+			}
+			# Stop all sound loops
+			for i = 0; 32; 1 {
+				modifysnd{channel: $i; loopcount: 1}
+			}
+			# Remove infinite explods (untested)
+			for i = 0; numexplod - 1; 1 {
+				if explodvar(-1, $i, removetime) = -1 {
+					removeexplod{ID: -1; index: $i}
+					let i = $i - 1; # The array just got shorter
+				}
+			}
+			# Fading explod
+			explod{
+				postype: p1;
+				anim: anim;
+				animelem: animelemno(-1);
+				animfreeze: 1;
+				sprpriority: sprpriority;
+				removetime: 16;
+				trans: addalpha;
+				alpha: alpha source, alpha dest;
+				scale: const(size.xscale), const(size.yscale);
+				palfx.time: 16;
+				palfx.color: 0;
+				palfx.mul: palfxvar(mul.r), palfxvar(mul.g), palfxvar(mul.b);
+				interpolation.time: 16;
+				interpolation.alpha: 0, 256;
+				ownpal: 1;
+			}
+			destroyself{}
+		}
+	}
+}
+
+# Check if lifebars are disabled
+ignorehitpause if !ishelper && teamside > 0 {
+	for i = 1; 8; 1 { # Ikemen supports up to 8 players
+		if playerIDexist(player($i), ID) {
+			if player($i), isasserted(nobardisplay) {
+				mapset{map: "_pots_shadowassist_hidegauge"; value: 1; redirectID: player(teamleader), ID}
+				mapset{map: "_pots_shadowassist_hidegauge"; value: 1; redirectID: player(enemy, teamleader), ID}
+				break;
+			}
+		}
+	}
+}
+
+# Gauge display
+# Only for the team leaders
+ignorehitpause if !ishelper && teamside > 0 && playerno = teamleader && roundstate = 2 {
+
+	# Generate text
+	if roundstate = [1, 3] && map(_pots_shadowassist_hidegauge) = 0 {
+
+		if $canuseshadow {
+			let textcolor = 255;
+		} else {
+			let textcolor = 160;
+		}
+
+		# Shadow layer
+		if map(_pots_shadowassist_cfg_text_shadow) {
+			let offset = map(_pots_shadowassist_cfg_text_scale) * 1.0;
+			if teamside = 1 {
+				text{
+					font: F map(_pots_shadowassist_cfg_text_font);
+					text: "SHADOW x %d%%";
+					params: floor(100 * map(_pots_shadowassist_gauge) / 1000.0);
+					removetime: 1;
+					layerno: map(_pots_shadowassist_cfg_text_layer);
+					align: 1;
+					localcoord: 320, 240;
+					pos: map(_pots_shadowassist_cfg_text_posx) + $offset, map(_pots_shadowassist_cfg_text_posy) + $offset;
+					scale: map(_pots_shadowassist_cfg_text_scale), map(_pots_shadowassist_cfg_text_scale);
+					color: 0, 0, 0;
+				}
+			} else {
+				text{
+					font: F map(_pots_shadowassist_cfg_text_font);
+					text: "%d%% x SHADOW";
+					params: floor(100 * map(_pots_shadowassist_gauge) / 1000.0);
+					removetime: 1;
+					layerno: map(_pots_shadowassist_cfg_text_layer);
+					align: -1;
+					localcoord: 320, 240;
+					pos: 320 - map(_pots_shadowassist_cfg_text_posx) + $offset, map(_pots_shadowassist_cfg_text_posy) + $offset;
+					scale: map(_pots_shadowassist_cfg_text_scale), map(_pots_shadowassist_cfg_text_scale);
+					color: 0, 0, 0;
+				}
+			}
+		}
+
+		# Main Text
+		if teamside = 1 {
+			text{
+				font: F map(_pots_shadowassist_cfg_text_font);
+				text: "SHADOW x %d%%";
+				params: floor(100 * map(_pots_shadowassist_gauge) / 1000.0);
+				removetime: 1;
+				layerno: map(_pots_shadowassist_cfg_text_layer);
+				align: 1;
+				localcoord: 320, 240;
+				pos: map(_pots_shadowassist_cfg_text_posx), map(_pots_shadowassist_cfg_text_posy);
+				scale: map(_pots_shadowassist_cfg_text_scale), map(_pots_shadowassist_cfg_text_scale);
+				color: $textcolor, $textcolor, $textcolor;
+			}
+		} else {
+			text{
+				font: F map(_pots_shadowassist_cfg_text_font);
+				text: "%d%% x SHADOW";
+				params: floor(100 * map(_pots_shadowassist_gauge) / 1000.0);
+				removetime: 1;
+				layerno: map(_pots_shadowassist_cfg_text_layer);
+				align: -1;
+				localcoord: 320, 240;
+				pos: 320 - map(_pots_shadowassist_cfg_text_posx), map(_pots_shadowassist_cfg_text_posy);
+				scale: map(_pots_shadowassist_cfg_text_scale), map(_pots_shadowassist_cfg_text_scale);
+				color: $textcolor, $textcolor, $textcolor;
+			}
+		}
+	}
+
+	# Reset gauge hidden flag
+	mapset{map: "_pots_shadowassist_hidegauge"; value: 0}
+
+	# Debug
+	#displaytoclipboard{
+	#	text: "%d";
+	#	params: ;
+	#}
+
+}
