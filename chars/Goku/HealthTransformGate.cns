@@ -1,13 +1,146 @@
 ;===============================================================================
 ; HealthTransformGate.cns
-; Blocks Goku's manual transformation commands unless the health-based order is met.
-; This lets Goku keep his original CMD file while forcing the intended phase ladder:
+; Goku-specific health transformation controller.
+;
+; Purpose:
+; - Auto-transform Goku at health thresholds.
+; - Restore 10% life on each successful transformation.
+; - Block manual form skips and de-transform cancels.
+;
+; Order:
 ; Base -> SSJ -> SSJ2 -> SSJ3 -> SSG -> SSGSS -> UI -> MUI
 ;===============================================================================
 
 [Statedef -2]
 
+;-------------------------------------------------------------------------------
+; Auto-transform + 10% health restore.
+; These are CNS-side so they do not depend on Lua player hooks.
+;-------------------------------------------------------------------------------
+
+[State -2, Auto SSJ Heal]
+type = LifeAdd
+triggerall = var(2) = 0
+triggerall = life <= lifemax * 0.85
+triggerall = stateno != 700
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto SSJ]
+type = ChangeState
+triggerall = var(2) = 0
+triggerall = life <= lifemax * 0.85
+triggerall = stateno != 700
+trigger1 = ctrl
+value = 700
+
+[State -2, Auto SSJ2 Heal]
+type = LifeAdd
+triggerall = var(2) = 1
+triggerall = life <= lifemax * 0.70
+triggerall = stateno != 800
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto SSJ2]
+type = ChangeState
+triggerall = var(2) = 1
+triggerall = life <= lifemax * 0.70
+triggerall = stateno != 800
+trigger1 = ctrl
+value = 800
+
+[State -2, Auto SSJ3 Heal]
+type = LifeAdd
+triggerall = var(2) = 2
+triggerall = life <= lifemax * 0.55
+triggerall = stateno != 900
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto SSJ3]
+type = ChangeState
+triggerall = var(2) = 2
+triggerall = life <= lifemax * 0.55
+triggerall = stateno != 900
+trigger1 = ctrl
+value = 900
+
+[State -2, Auto SSG Heal]
+type = LifeAdd
+triggerall = var(2) = 3
+triggerall = life <= lifemax * 0.40
+triggerall = stateno != 1900
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto SSG]
+type = ChangeState
+triggerall = var(2) = 3
+triggerall = life <= lifemax * 0.40
+triggerall = stateno != 1900
+trigger1 = ctrl
+value = 1900
+
+[State -2, Auto SSGSS Heal]
+type = LifeAdd
+triggerall = var(2) = 4
+triggerall = life <= lifemax * 0.30
+triggerall = stateno != 1901
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto SSGSS]
+type = ChangeState
+triggerall = var(2) = 4
+triggerall = life <= lifemax * 0.30
+triggerall = stateno != 1901
+trigger1 = ctrl
+value = 1901
+
+[State -2, Auto UI Heal]
+type = LifeAdd
+triggerall = var(2) = 5
+triggerall = life <= lifemax * 0.20
+triggerall = stateno != 1903
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto UI]
+type = ChangeState
+triggerall = var(2) = 5
+triggerall = life <= lifemax * 0.20
+triggerall = stateno != 1903
+trigger1 = ctrl
+value = 1903
+
+[State -2, Auto MUI Heal]
+type = LifeAdd
+triggerall = var(2) = 6
+triggerall = life <= lifemax * 0.10
+triggerall = stateno != 1906
+trigger1 = ctrl
+value = ceil(lifemax * 0.10)
+kill = 0
+
+[State -2, Auto MUI]
+type = ChangeState
+triggerall = var(2) = 6
+triggerall = life <= lifemax * 0.10
+triggerall = stateno != 1906
+trigger1 = ctrl
+value = 1906
+
+;-------------------------------------------------------------------------------
 ; Keep the universal stage variable in sync with Goku's real form variable.
+;-------------------------------------------------------------------------------
+
 [State -2, Sync Base Stage]
 type = VarSet
 trigger1 = var(2) = 0
@@ -56,10 +189,10 @@ trigger1 = var(2) = 7
 v = 50
 value = 7
 
-;--------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
 ; Health/order gates for transformation states.
 ; If a player manually enters a form too early or out of order, cancel it.
-;--------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
 
 [State -2, Gate SSJ]
 type = ChangeState
@@ -116,9 +249,9 @@ trigger2 = Life > LifeMax * 0.10
 value = 0
 ctrl = 1
 
-;--------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
 ; Make forms permanent by disabling the manual cancel/de-transform states.
-;--------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
 
 [State -2, Block Form Cancels]
 type = ChangeState
