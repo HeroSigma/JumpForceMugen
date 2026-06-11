@@ -1,0 +1,132 @@
+;===============================================================================
+; HealthTransformGate.cns
+; Blocks Goku's manual transformation commands unless the health-based order is met.
+; This lets Goku keep his original CMD file while forcing the intended phase ladder:
+; Base -> SSJ -> SSJ2 -> SSJ3 -> SSG -> SSGSS -> UI -> MUI
+;===============================================================================
+
+[Statedef -2]
+
+; Keep the universal stage variable in sync with Goku's real form variable.
+[State -2, Sync Base Stage]
+type = VarSet
+trigger1 = var(2) = 0
+v = 50
+value = 0
+
+[State -2, Sync SSJ Stage]
+type = VarSet
+trigger1 = var(2) = 1
+v = 50
+value = 1
+
+[State -2, Sync SSJ2 Stage]
+type = VarSet
+trigger1 = var(2) = 2
+v = 50
+value = 2
+
+[State -2, Sync SSJ3 Stage]
+type = VarSet
+trigger1 = var(2) = 3
+v = 50
+value = 3
+
+[State -2, Sync SSG Stage]
+type = VarSet
+trigger1 = var(2) = 4
+v = 50
+value = 4
+
+[State -2, Sync SSGSS Stage]
+type = VarSet
+trigger1 = var(2) = 5
+v = 50
+value = 5
+
+[State -2, Sync UI Stage]
+type = VarSet
+trigger1 = var(2) = 6
+v = 50
+value = 6
+
+[State -2, Sync MUI Stage]
+type = VarSet
+trigger1 = var(2) = 7
+v = 50
+value = 7
+
+;--------------------------------------------------------------------------
+; Health/order gates for transformation states.
+; If a player manually enters a form too early or out of order, cancel it.
+;--------------------------------------------------------------------------
+
+[State -2, Gate SSJ]
+type = ChangeState
+triggerall = stateno = 700
+trigger1 = Life > LifeMax * 0.85
+value = 0
+ctrl = 1
+
+[State -2, Gate SSJ2]
+type = ChangeState
+triggerall = stateno = 800
+trigger1 = var(2) != 1
+trigger2 = Life > LifeMax * 0.70
+value = 0
+ctrl = 1
+
+[State -2, Gate SSJ3]
+type = ChangeState
+triggerall = stateno = 900
+trigger1 = var(2) != 2
+trigger2 = Life > LifeMax * 0.55
+value = 0
+ctrl = 1
+
+[State -2, Gate SSG]
+type = ChangeState
+triggerall = stateno = 1900
+trigger1 = var(2) != 3
+trigger2 = Life > LifeMax * 0.40
+value = 0
+ctrl = 1
+
+[State -2, Gate SSGSS]
+type = ChangeState
+triggerall = stateno = 1901
+trigger1 = var(2) != 4
+trigger2 = Life > LifeMax * 0.30
+value = 0
+ctrl = 1
+
+[State -2, Gate UI]
+type = ChangeState
+triggerall = stateno = 1903
+trigger1 = var(2) != 5
+trigger2 = Life > LifeMax * 0.20
+value = 0
+ctrl = 1
+
+[State -2, Gate MUI]
+type = ChangeState
+triggerall = stateno = 1906
+trigger1 = var(2) != 6
+trigger2 = Life > LifeMax * 0.10
+value = 0
+ctrl = 1
+
+;--------------------------------------------------------------------------
+; Make forms permanent by disabling the manual cancel/de-transform states.
+;--------------------------------------------------------------------------
+
+[State -2, Block Form Cancels]
+type = ChangeState
+trigger1 = stateno = 705
+trigger2 = stateno = 805
+trigger3 = stateno = 905
+trigger4 = stateno = 1905
+trigger5 = stateno = 1902
+trigger6 = stateno = 1904
+value = 0
+ctrl = 1
