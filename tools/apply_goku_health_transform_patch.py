@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GOKU_DIR = ROOT / "chars" / "Goku"
 CMD_PATH = GOKU_DIR / "Goku.cmd"
+DEF_PATH = GOKU_DIR / "Goku.def"
 
 
 def read_text(path: Path) -> str:
@@ -30,6 +31,8 @@ def replace_state_minus_one_block(text: str, state_name: str, new_block: str) ->
 def patch_goku_cmd() -> None:
     text = read_text(CMD_PATH)
 
+    # Every ChangeState controller must have at least one trigger1.
+    # The health logic lives in triggerall lines; trigger1 = 1 satisfies IKEMEN/MUGEN syntax.
     transform_blocks = {
         "SS1": """[State -1, SS1]
 type = ChangeState
@@ -39,7 +42,8 @@ triggerall = ctrl
 triggerall = statetype != A
 triggerall = var(2) = 0
 triggerall = life <= lifemax * 85 / 100
-value = 700""",
+value = 700
+trigger1 = 1""",
         "SS2": """[State -1, SS2]
 type = ChangeState
 triggerall = roundstate = 2
@@ -48,7 +52,8 @@ triggerall = ctrl
 triggerall = statetype != A
 triggerall = var(2) = 1
 triggerall = life <= lifemax * 70 / 100
-value = 800""",
+value = 800
+trigger1 = 1""",
         "SS3": """[State -1, SS3]
 type = ChangeState
 triggerall = roundstate = 2
@@ -57,7 +62,8 @@ triggerall = ctrl
 triggerall = statetype != A
 triggerall = var(2) = 2
 triggerall = life <= lifemax * 55 / 100
-value = 900""",
+value = 900
+trigger1 = 1""",
         "SSGOD": """[State -1, SSGOD]
 type = ChangeState
 triggerall = roundstate = 2
@@ -66,7 +72,8 @@ triggerall = ctrl
 triggerall = statetype != A
 triggerall = var(2) = 3
 triggerall = life <= lifemax * 40 / 100
-value = 1900""",
+value = 1900
+trigger1 = 1""",
         "SSGSS": """[State -1, SSGSS]
 type = ChangeState
 triggerall = roundstate = 2
@@ -75,7 +82,8 @@ triggerall = ctrl
 triggerall = statetype != A
 triggerall = var(2) = 4
 triggerall = life <= lifemax * 30 / 100
-value = 1901""",
+value = 1901
+trigger1 = 1""",
         "MG": """[State -1, MG]
 type = ChangeState
 triggerall = roundstate = 2
@@ -85,7 +93,8 @@ triggerall = statetype != A
 triggerall = numhelper(1968) = 0
 triggerall = var(2) = 5
 triggerall = life <= lifemax * 20 / 100
-value = 1903""",
+value = 1903
+trigger1 = 1""",
         "MUI": """[State -1, MUI]
 type = ChangeState
 triggerall = roundstate = 2
@@ -95,7 +104,8 @@ triggerall = statetype != A
 triggerall = numhelper(1968) = 0
 triggerall = var(2) = 6
 triggerall = life <= lifemax * 10 / 100
-value = 1906""",
+value = 1906
+trigger1 = 1""",
     }
 
     for state_name, block in transform_blocks.items():
@@ -105,27 +115,33 @@ value = 1906""",
         "SS1 Cancelar": """[State -1, SS1 Cancelar]
 type = ChangeState
 triggerall = 0 ; disabled: health-based forms are permanent
-value = 705""",
+value = 705
+trigger1 = 1""",
         "SS2 Cancelar": """[State -1, SS2 Cancelar]
 type = ChangeState
 triggerall = 0 ; disabled: health-based forms are permanent
-value = 805""",
+value = 805
+trigger1 = 1""",
         "SS3 Cancelar": """[State -1, SS3 Cancelar]
 type = ChangeState
 triggerall = 0 ; disabled: health-based forms are permanent
-value = 905""",
+value = 905
+trigger1 = 1""",
         "SSGOD Cancelar": """[State -1, SSGOD Cancelar]
 type = ChangeState
 triggerall = 0 ; disabled: health-based forms are permanent
-value = 1905""",
+value = 1905
+trigger1 = 1""",
         "SSGSS Cancelar": """[State -1, SSGSS Cancelar]
 type = ChangeState
 triggerall = 0 ; disabled: health-based forms are permanent
-value = 1902""",
+value = 1902
+trigger1 = 1""",
         "MG Cancelar": """[State -1, MG Cancelar]
 type = ChangeState
 triggerall = 0 ; disabled: health-based forms are permanent
-value = 1904""",
+value = 1904
+trigger1 = 1""",
     }
 
     for state_name, block in cancel_blocks.items():
@@ -179,10 +195,20 @@ def patch_health_restore() -> None:
         insert_life_restore(GOKU_DIR / filename, state_no)
 
 
+def remove_old_gate_from_def() -> None:
+    if not DEF_PATH.exists():
+        return
+    text = read_text(DEF_PATH)
+    text = re.sub(r"(?mi)^st\d+\s*=\s*HealthTransformGate\.cns\s*\n?", "", text)
+    write_text(DEF_PATH, text)
+    print(f"Removed HealthTransformGate.cns from {DEF_PATH} if present")
+
+
 def main() -> None:
     patch_goku_cmd()
     patch_health_restore()
-    print("Done. Goku transformations are now health-only and restore 10% life per form.")
+    remove_old_gate_from_def()
+    print("Done. Goku transformations are now health-only, syntax-safe, and restore 10% life per form.")
 
 
 if __name__ == "__main__":
